@@ -7,18 +7,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Клас для тестування бізнес-логіки TrainManager.
- * Використовує JUnit 5.
- */
 class TrainManagerTest {
 
     private TrainManager trainManager;
 
     @BeforeEach
     void setUp() {
-        // Цей метод запускається перед КОЖНИМ тестом.
-        // Ми створюємо чистий менеджер і наповнюємо його даними.
         trainManager = new TrainManager();
         trainManager.addWagon(new LuxuryCarriage(1, 10, 100)); // Люкс (High comfort)
         trainManager.addWagon(new PlaczkartCarriage(2, 50, 500)); // Плацкарт (Low comfort)
@@ -39,7 +33,6 @@ class TrainManagerTest {
 
     @Test
     void testSortByComfort() {
-        // До сортування порядок: High, Low, Medium
         trainManager.sortByComfort();
 
         List<RollingStock> wagons = trainManager.getWagons();
@@ -52,8 +45,6 @@ class TrainManagerTest {
 
     @Test
     void testFindCarriagesByPassengerRange() {
-        // Шукаємо вагони, де від 15 до 30 пасажирів.
-        // Має знайтися тільки Купе (20 пасажирів).
         List<RollingStock> found = trainManager.findCarriagesByPassengerRange(15, 30);
 
         assertEquals(1, found.size());
@@ -62,7 +53,6 @@ class TrainManagerTest {
 
     @Test
     void testFindCarriagesByPassengerRange_NotFound() {
-        // Шукаємо нереальний діапазон
         List<RollingStock> found = trainManager.findCarriagesByPassengerRange(1000, 2000);
         assertTrue(found.isEmpty());
     }

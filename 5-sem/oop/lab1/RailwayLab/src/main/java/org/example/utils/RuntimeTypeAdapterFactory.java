@@ -15,10 +15,9 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Адаптер для GSON, який дозволяє зберігати та зчитувати поліморфні об'єкти.
- * (Код базується на Google Gson Extras).
- */
+
+ // адаптер для GSON, який дозволяє зберігати та зчитувати поліморфні об'єкти.
+
 public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     private final Class<T> baseType;
     private final String typeFieldName;

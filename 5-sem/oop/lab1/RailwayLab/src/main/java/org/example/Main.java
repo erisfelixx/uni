@@ -13,7 +13,6 @@ public class Main {
         FileManager fileManager = new FileManager();
         Scanner scanner = new Scanner(System.in);
 
-        // Додамо трохи вагонів для старту (щоб не було пусто)
         seedTrain(train);
 
         while (true) {
@@ -25,7 +24,7 @@ public class Main {
             System.out.println("5. Знайти вагони за діапазоном пасажирів");
             System.out.println("6. Зберегти поїзд у файл (JSON)");
             System.out.println("7. Завантажити поїзд з файлу");
-            System.out.println("8. ДОДАТИ ВАГОН ВРУЧНУ"); // <--- Новий пункт
+            System.out.println("8. ДОДАТИ ВАГОН ВРУЧНУ");
             System.out.println("0. Вихід");
             System.out.print("Ваш вибір: ");
 
@@ -58,7 +57,7 @@ public class Main {
                     System.out.println("Поїзд оновлено з файлу!");
                     break;
                 case "8":
-                    addNewWagon(train, scanner); // <--- Виклик нового методу
+                    addNewWagon(train, scanner);
                     break;
                 case "0":
                     System.out.println("До побачення!");
@@ -69,7 +68,7 @@ public class Main {
         }
     }
 
-    // Метод для додавання вагона через консоль
+    //додавання вагона через консоль
     private static void addNewWagon(TrainManager train, Scanner scanner) {
         System.out.println("\n--- Додавання нового вагона ---");
         System.out.println("Оберіть тип вагона:");

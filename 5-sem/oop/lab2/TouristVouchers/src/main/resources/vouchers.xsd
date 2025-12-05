@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.example.com/touristVouchers"
+        xmlns:tns="http://www.example.com/touristVouchers"
+        elementFormDefault="qualified">
+
+    <!-- кореневий елемент -->
+    <element name="TouristVouchers">
+        <complexType>
+            <sequence>
+                <element name="TouristVoucher" type="tns:TouristVoucherType" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <!-- путівка -->
+    <complexType name="TouristVoucherType">
+        <sequence>
+            <element name="Type" type="tns:VoucherType"/>
+            <element name="Country" type="string"/>
+            <element name="DaysNights" type="tns:DaysNightsType"/>
+            <element name="Transport" type="tns:TransportType"/>
+            <element name="Hotel" type="tns:HotelType"/>
+            <element name="Cost" type="tns:CostType"/>
+        </sequence>
+        <attribute name="id" type="tns:VoucherIdType" use="required"/>
+    </complexType>
+
+    <!-- дні та ночі -->
+    <complexType name="DaysNightsType">
+        <sequence>
+            <element name="Days" type="positiveInteger"/>
+            <element name="Nights" type="positiveInteger"/>
+        </sequence>
+    </complexType>
+
+    <!-- готель -->
+    <complexType name="HotelType">
+        <sequence>
+            <!-- Вимога: Граничні значення (1-5 зірок) -->
+            <element name="Stars">
+                <simpleType>
+                    <restriction base="integer">
+                        <minInclusive value="1"/>
+                        <maxInclusive value="5"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element name="Food" type="tns:FoodType"/>
+            <element name="RoomPlaces" type="positiveInteger"/>
+            <element name="TV" type="boolean"/>
+            <element name="AirConditioning" type="boolean"/>
+        </sequence>
+    </complexType>
+
+    <!--вартість -->
+    <complexType name="CostType">
+        <simpleContent>
+            <extension base="decimal">
+                <attribute name="currency" type="string" default="UAH"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <!-- тип путівки -->
+    <simpleType name="VoucherType">
+        <restriction base="string">
+            <enumeration value="WEEKEND"/>
+            <enumeration value="EXCURSION"/>
+            <enumeration value="RELAXATION"/>
+            <enumeration value="PILGRIMAGE"/>
+        </restriction>
+    </simpleType>
+
+    <!-- транспорт -->
+    <simpleType name="TransportType">
+        <restriction base="string">
+            <enumeration value="AIR"/>
+            <enumeration value="RAIL"/>
+            <enumeration value="AUTO"/>
+            <enumeration value="SHIP"/>
+        </restriction>
+    </simpleType>
+
+    <!-- харчування -->
+    <simpleType name="FoodType">
+        <restriction base="string">
+            <enumeration value="HB"/> <!-- Half Board -->
+            <enumeration value="BB"/> <!-- Bed & Breakfast -->
+            <enumeration value="AI"/> <!-- All Inclusive -->
+            <enumeration value="NONE"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="VoucherIdType">
+        <restriction base="ID">
+            <pattern value="TV-[0-9]{4}"/>
+        </restriction>
+    </simpleType>
+
+</schema>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TouristVouchers xmlns="http://www.example.com/touristVouchers"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.example.com/touristVouchers vouchers.xsd">
+
+    <!-- тест №1 (дешевий, WEEKEND) -->
+    <TouristVoucher id="TV-1111">
+        <Type>WEEKEND</Type>
+        <Country>TestLand</Country>
+        <DaysNights><Days>2</Days><Nights>1</Nights></DaysNights>
+        <Transport>AUTO</Transport>
+        <Hotel>
+            <Stars>1</Stars>
+            <Food>NONE</Food>
+            <RoomPlaces>1</RoomPlaces>
+            <TV>false</TV>
+            <AirConditioning>false</AirConditioning>
+        </Hotel>
+        <Cost currency="USD">100.00</Cost>
+    </TouristVoucher>
+
+    <!-- тест № 2 (дорогий, EXCURSION)-->
+    <TouristVoucher id="TV-2222">
+        <Type>EXCURSION</Type>
+        <Country>AnotherLand</Country>
+        <DaysNights><Days>5</Days><Nights>4</Nights></DaysNights>
+        <Transport>AIR</Transport>
+        <Hotel>
+            <Stars>5</Stars>
+            <Food>AI</Food>
+            <RoomPlaces>2</RoomPlaces>
+            <TV>true</TV>
+            <AirConditioning>true</AirConditioning>
+        </Hotel>
+        <Cost currency="EUR">500.00</Cost>
+    </TouristVoucher>
+</TouristVouchers>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TouristVouchers xmlns="http://www.example.com/touristVouchers"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.example.com/touristVouchers vouchers.xsd">
+
+    <TouristVoucher id="TV-0001">
+        <Type>RELAXATION</Type>
+        <Country>Egypt</Country>
+        <DaysNights>
+            <Days>7</Days>
+            <Nights>6</Nights>
+        </DaysNights>
+        <Transport>AIR</Transport>
+        <Hotel>
+            <Stars>5</Stars>
+            <Food>AI</Food>
+            <RoomPlaces>2</RoomPlaces>
+            <TV>true</TV>
+            <AirConditioning>true</AirConditioning>
+        </Hotel>
+        <Cost currency="USD">850.00</Cost>
+    </TouristVoucher>
+
+    <TouristVoucher id="TV-0002">
+        <Type>EXCURSION</Type>
+        <Country>France</Country>
+        <DaysNights>
+            <Days>5</Days>
+            <Nights>4</Nights>
+        </DaysNights>
+        <Transport>AUTO</Transport>
+        <Hotel>
+            <Stars>3</Stars>
+            <Food>BB</Food>
+            <RoomPlaces>1</RoomPlaces>
+            <TV>true</TV>
+            <AirConditioning>false</AirConditioning>
+        </Hotel>
+        <Cost currency="EUR">400.50</Cost>
+    </TouristVoucher>
+
+    <TouristVoucher id="TV-0003">
+        <Type>WEEKEND</Type>
+        <Country>Poland</Country>
+        <DaysNights>
+            <Days>3</Days>
+            <Nights>2</Nights>
+        </DaysNights>
+        <Transport>RAIL</Transport>
+        <Hotel>
+            <Stars>4</Stars>
+            <Food>HB</Food>
+            <RoomPlaces>2</RoomPlaces>
+            <TV>false</TV>
+            <AirConditioning>true</AirConditioning>
+        </Hotel>
+        <Cost currency="PLN">1200.00</Cost>
+    </TouristVoucher>
+
+</TouristVouchers>

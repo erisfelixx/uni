@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.View;
 
 public class GameView extends View {
-
     private Maze maze;
     private Player player;
 
@@ -15,8 +15,14 @@ public class GameView extends View {
     private Paint playerPaint;
     private Paint exitPaint;
     private Paint pathPaint;
+    private Paint gridPaint;
+    private Paint glowPaint;
 
     private float cellSize;
+
+    private int stepCount = 0;
+    private long startTime;
+    private boolean gameWon = false;
 
     // конструктор
     public GameView(Context context) {
@@ -28,15 +34,38 @@ public class GameView extends View {
 
         wallPaint = new Paint();
         wallPaint.setColor(Color.BLACK);
+        wallPaint.setStyle(Paint.Style.FILL);
+        wallPaint.setAntiAlias(true);
 
         playerPaint = new Paint();
-        playerPaint.setColor(Color.RED);
+        playerPaint.setColor(Color.parseColor("#E74C3C"));
+        playerPaint.setStyle(Paint.Style.FILL);
+        playerPaint.setAntiAlias(true);
 
         exitPaint = new Paint();
-        exitPaint.setColor(Color.GREEN);
+        exitPaint.setColor(Color.parseColor("#27AE60"));
+        exitPaint.setStyle(Paint.Style.FILL);
+        exitPaint.setAntiAlias(true);
 
         pathPaint = new Paint();
-        pathPaint.setColor(Color.LTGRAY);
+        pathPaint.setColor(Color.parseColor("#ECF0F1"));
+        pathPaint.setStyle(Paint.Style.FILL);
+        pathPaint.setAntiAlias(true);
+
+        gridPaint = new Paint();
+        gridPaint.setColor(Color.parseColor("#BDC3C7"));
+        gridPaint.setStyle(Paint.Style.STROKE);
+        gridPaint.setStrokeWidth(1f);
+        gridPaint.setAntiAlias(true);
+
+        glowPaint = new Paint();
+        glowPaint.setColor(Color.parseColor("#E74C3C"));
+        glowPaint.setAlpha(80);
+        glowPaint.setStyle(Paint.Style.FILL);
+        glowPaint.setAntiAlias(true);
+
+        // запускаємо таймер
+        startTime = System.currentTimeMillis();
     }
 
     // головний метод малювання
@@ -61,13 +90,17 @@ public class GameView extends View {
                 int tileType = maze.getTile(x, y);
 
                 if (tileType == 1) {
-                    //малюємо стіну (квадрат)
                     canvas.drawRect(left, top, right, bottom, wallPaint);
                 } else if (tileType == 3) {
-                    //малюємо вихід
                     canvas.drawRect(left, top, right, bottom, exitPaint);
+
+                    Paint exitGlowPaint = new Paint();
+                    exitGlowPaint.setColor(Color.parseColor("#27AE60"));
+                    exitGlowPaint.setAlpha(60);
+                    exitGlowPaint.setStyle(Paint.Style.FILL);
+                    exitGlowPaint.setAntiAlias(true);
+                    canvas.drawRect(left - 4, top - 4, right + 4, bottom + 4, exitGlowPaint);
                 } else {
-                    //малюємо підлогу (прохід)
                     canvas.drawRect(left, top, right, bottom, pathPaint);
                 }
             }
@@ -76,34 +109,65 @@ public class GameView extends View {
         // гравець
         float playerCenterX = player.getX() * cellSize + cellSize / 2;
         float playerCenterY = player.getY() * cellSize + cellSize / 2;
-        float playerRadius = cellSize / 2.5f;
+        float playerRadius = cellSize / 3f;
+
+        canvas.drawCircle(playerCenterX, playerCenterY, playerRadius * 1.5f, glowPaint);
 
         canvas.drawCircle(playerCenterX, playerCenterY, playerRadius, playerPaint);
+        Paint centerPaint = new Paint();
+        centerPaint.setColor(Color.WHITE);
+        centerPaint.setStyle(Paint.Style.FILL);
+        centerPaint.setAntiAlias(true);
+        canvas.drawCircle(playerCenterX, playerCenterY, playerRadius * 0.4f, centerPaint);
+
+        drawStats(canvas);
     }
 
-    // логіка руху
-    public void movePlayer(int dx, int dy) {
-        // 1. Рахуємо, куди гравець ХОЧЕ піти
-        int newX = player.getX() + dx;
-        int newY = player.getY() + dy;
+    private void drawStats(Canvas canvas) {
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(40);
+        textPaint.setAntiAlias(true);
+        textPaint.setStyle(Paint.Style.FILL);
 
-        // перевірка на вихід за межі масиву (щоб програма не вилетіла)
-        if (newX >= 0 && newX < maze.getSize() && newY >= 0 && newY < maze.getSize()) {
+        // лічильник кроків
+        canvas.drawText("Кроки: " + stepCount, 20, 50, textPaint);
 
-            // перевірка на стіну
-            if (maze.getTile(newX, newY) != 1) {
-                player.setPosition(newX, newY);
-
-                invalidate();
-
-                checkWin();
-            }
+        // таймер
+        if (!gameWon) {
+            long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+            canvas.drawText("Час: " + elapsedTime + "с", 20, 100, textPaint);
+            invalidate(); // оновлюємо для таймера
+        } else {
+            long finalTime = (System.currentTimeMillis() - startTime) / 1000;
+            canvas.drawText("Час: " + finalTime + "с", 20, 100, textPaint);
         }
     }
 
     private void checkWin() {
-        if (maze.getTile(player.getX(), player.getY()) == 3) {  //вихід!
-            playerPaint.setColor(Color.GREEN);
+        if (maze.getTile(player.getX(), player.getY()) == 3) {  // вихід!
+            gameWon = true;
+            // змінюємо колір гравця на зелений при перемозі
+            playerPaint.setColor(Color.parseColor("#27AE60"));
+            glowPaint.setColor(Color.parseColor("#27AE60"));
         }
+    }
+
+    // метод для створення нового лабіринту
+    public void generateNewMaze() {
+        maze = new Maze();
+        player = new Player(maze.getStartPosition().x, maze.getStartPosition().y);
+
+        // скидаємо статистику
+        stepCount = 0;
+        startTime = System.currentTimeMillis();
+        gameWon = false;
+
+        // повертаємо колір гравця на червоний
+        playerPaint.setColor(Color.parseColor("#E74C3C"));
+        glowPaint.setColor(Color.parseColor("#E74C3C"));
+        glowPaint.setAlpha(80);
+
+        invalidate();
     }
 }

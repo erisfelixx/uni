@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.view.View;
 
 public class GameView extends View {
+
     private Maze maze;
     private Player player;
 
@@ -15,13 +15,13 @@ public class GameView extends View {
     private Paint playerPaint;
     private Paint exitPaint;
     private Paint pathPaint;
-    private Paint gridPaint;
     private Paint glowPaint;
 
     private float cellSize;
 
     private int stepCount = 0;
     private long startTime;
+    private long finalTime = 0;
     private boolean gameWon = false;
 
     // конструктор
@@ -51,12 +51,6 @@ public class GameView extends View {
         pathPaint.setColor(Color.parseColor("#ECF0F1"));
         pathPaint.setStyle(Paint.Style.FILL);
         pathPaint.setAntiAlias(true);
-
-        gridPaint = new Paint();
-        gridPaint.setColor(Color.parseColor("#BDC3C7"));
-        gridPaint.setStyle(Paint.Style.STROKE);
-        gridPaint.setStrokeWidth(1f);
-        gridPaint.setAntiAlias(true);
 
         glowPaint = new Paint();
         glowPaint.setColor(Color.parseColor("#E74C3C"));
@@ -106,7 +100,7 @@ public class GameView extends View {
             }
         }
 
-        // гравець
+        //гравець
         float playerCenterX = player.getX() * cellSize + cellSize / 2;
         float playerCenterY = player.getY() * cellSize + cellSize / 2;
         float playerRadius = cellSize / 3f;
@@ -114,33 +108,34 @@ public class GameView extends View {
         canvas.drawCircle(playerCenterX, playerCenterY, playerRadius * 1.5f, glowPaint);
 
         canvas.drawCircle(playerCenterX, playerCenterY, playerRadius, playerPaint);
+
         Paint centerPaint = new Paint();
         centerPaint.setColor(Color.WHITE);
         centerPaint.setStyle(Paint.Style.FILL);
         centerPaint.setAntiAlias(true);
         canvas.drawCircle(playerCenterX, playerCenterY, playerRadius * 0.4f, centerPaint);
-
-        drawStats(canvas);
     }
 
-    private void drawStats(Canvas canvas) {
-        Paint textPaint = new Paint();
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(40);
-        textPaint.setAntiAlias(true);
-        textPaint.setStyle(Paint.Style.FILL);
+    // логіка руху
+    public void movePlayer(int dx, int dy) {
+        if (gameWon) return; // не рухаємось якщо гра виграна
 
-        // лічильник кроків
-        canvas.drawText("Кроки: " + stepCount, 20, 50, textPaint);
+        // рахуємо, куди гравець хоче піти
+        int newX = player.getX() + dx;
+        int newY = player.getY() + dy;
 
-        // таймер
-        if (!gameWon) {
-            long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
-            canvas.drawText("Час: " + elapsedTime + "с", 20, 100, textPaint);
-            invalidate(); // оновлюємо для таймера
-        } else {
-            long finalTime = (System.currentTimeMillis() - startTime) / 1000;
-            canvas.drawText("Час: " + finalTime + "с", 20, 100, textPaint);
+        // перевірка на вихід за межі масиву (щоб програма не вилетіла)
+        if (newX >= 0 && newX < maze.getSize() && newY >= 0 && newY < maze.getSize()) {
+
+            // перевірка на стіну
+            if (maze.getTile(newX, newY) != 1) {
+                player.setPosition(newX, newY);
+                stepCount++; // збільшуємо лічильник кроків
+
+                invalidate();
+
+                checkWin();
+            }
         }
     }
 
@@ -148,6 +143,7 @@ public class GameView extends View {
         if (maze.getTile(player.getX(), player.getY()) == 3) {  // вихід!
             gameWon = true;
             // змінюємо колір гравця на зелений при перемозі
+            finalTime = (System.currentTimeMillis() - startTime) / 1000;
             playerPaint.setColor(Color.parseColor("#27AE60"));
             glowPaint.setColor(Color.parseColor("#27AE60"));
         }
@@ -161,6 +157,7 @@ public class GameView extends View {
         // скидаємо статистику
         stepCount = 0;
         startTime = System.currentTimeMillis();
+        finalTime = 0;
         gameWon = false;
 
         // повертаємо колір гравця на червоний
@@ -169,5 +166,22 @@ public class GameView extends View {
         glowPaint.setAlpha(80);
 
         invalidate();
+    }
+
+    // геттери для статистики (для MainActivity)
+    public int getStepCount() {
+        return stepCount;
+    }
+
+    public long getElapsedTime() {
+        if (gameWon) {
+            return finalTime; // не рахуємо далі
+        } else {
+            return (System.currentTimeMillis() - startTime) / 1000;
+        }
+    }
+
+    public boolean isGameWon() {
+        return gameWon;
     }
 }

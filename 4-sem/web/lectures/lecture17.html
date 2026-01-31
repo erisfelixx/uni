@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lecture17</title>
+  <style>
+    body {
+      padding: 20px;
+    }
+    #chartContainer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 300px;
+      border-left: 1px solid black;
+      border-bottom: 1px solid black;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    .bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60px;
+    }
+    .bar div {
+      width: 100%;
+      background-color: paleturquoise;
+    }
+    .label {
+      margin-top: 5px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Гістограма продажів за категоріями</h1>
+  <div id="chartContainer"></div>
+  
+  <script>
+    const salesData = [
+      { name: 'Одяг', value: 120 },
+      { name: 'Книги',       value: 40  },
+      { name: 'Техніка',       value: 150 },
+      { name: 'Продукти',    value: 80  }
+    ];
+
+    const container = document.getElementById('chartContainer');
+    const maxValue = Math.max(...salesData.map(d => d.value));
+    const maxHeight = container.clientHeight;
+
+    salesData.forEach(item => {
+      const barWrapper = document.createElement('div');
+      barWrapper.classList.add('bar');
+
+      //створюємо стовпчик і розраховуємо висоту в пікселях пропорційно даним
+      const bar = document.createElement('div');
+      const heightPx = (item.value / maxValue) * maxHeight;
+      bar.style.height = heightPx + 'px';
+      barWrapper.appendChild(bar);
+
+      const label = document.createElement('div');
+      label.classList.add('label');
+      label.textContent = `${item.name} (${item.value})`;
+      barWrapper.appendChild(label);
+
+      container.appendChild(barWrapper);
+    });
+  </script>
+</body>
+</html>

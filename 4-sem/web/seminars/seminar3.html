@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Форма заявки на роботу в зоопарку</title>
+    <style>
+        body {
+            font-family: 'Georgia', Times, serif;
+            background-color: white;
+            display: flex;
+            flex-direction: column;   
+            justify-content: center;             /*центрування по горизонталі*/
+            align-items: center;                 /*центрування по вертикалі*/
+            height: 100vh;                       /*вся висота екрану*/
+            margin: 0;
+        }
+        fieldset {
+            width: 400px;                   
+            margin-bottom: 10px;               
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .red {
+            color: red;
+        }
+        .gray {
+            color: gray;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Форма заявки на роботу в зоопарку</h1>
+    <p><span class="gray">Будь ласка, заповніть форму. Обов'язкові поля відмічені</span> <span class="red">*</span></p>
+    <form action="#" method="post">
+    <fieldset>
+        <legend>Контактна інформація:</legend>
+        <table>
+            <tr>
+                <td><label for="name">Ім'я <span class="red">*</span></label></td>
+                <td><input type="text" id="name" name="name" required></td>
+            </tr>
+            <tr>
+                <td><label for="phone">Телефон</label></td>
+                <td><input type="tel" id="phone" name="phone"></td>
+            </tr>
+            <tr>
+                <td><label for="email">E-mail <span class="red">*</span></label></td>
+                <td><input type="email" id="email" name="email" required></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>Персональна інформація:</legend>
+        <table>
+        <tr>
+            <td><label for="age">Вік <span class="red">*</span></label></td>
+            <td><input type="number" id="age"  name="age" required></td>
+        </tr>
+        <tr>
+            <td><label for="gender">Стать</label></td>
+            <td>
+                <select id="gender" name="gender">
+                    <option value="female">Жінка</option>
+                    <option value="male">Чоловік</option>
+                </select>
+            </td>
+        </tr> 
+        <tr>
+            <td>
+                <label for="qualities">Перерахуйте особисті якості</label>
+            </td>
+            <td>    
+                <textarea id="qualities" name="qualities" rows="5" cols="40"></textarea>
+            </td>    
+        </tr>   
+    </table> 
+    </fieldset>
+
+    <fieldset>
+        <legend>Виберіть улюблених тварин:</legend>
+        <table>
+            <tr>
+                <td><input type="checkbox" id="zebra" name="animals" value="zebra"><label for="zebra">Зебра</label></td>
+                <td><input type="checkbox" id="elephant" name="animals" value="elephant"><label for="elephant">Слон</label></td>
+                <td><input type="checkbox" id="tiger" name="animals" value="tiger"><label for="tiger">Тигр</label></td>
+                <td><input type="checkbox" id="human" name="animals" value="human"><label for="human">Людина</label></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="skunk" name="animals" value="skunk"><label for="skunk">Скунс</label></td>
+                <td><input type="checkbox" id="lion" name="animals" value="lion"><label for="lion">Лев</label></td>
+                <td><input type="checkbox" id="rhinoceros" name="animals" value="rhinoceros"><label for="rhinoceros">Носоріг</label></td>
+                <td><input type="checkbox" id="turtle" name="animals" value="turtle"><label for="turtle">Черепаха</label></td>
+            </tr>
+        </table>
+    </fieldset>
+    <input type="submit" value="Відправити">
+</form>
+</body>
+</html>

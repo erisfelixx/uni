@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Фіксовані блоки</title>
+</head>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    header, footer {
+        background: #b52f2f;
+        color: white;
+        text-align: left;
+        height: 15%;
+    }
+    main {
+        display: flex;
+        flex: 1;
+    }
+    aside {
+        width: 17%;
+        background: #e26666;
+    }
+    section {
+        flex: 1;
+        background: #e93535;
+    }
+
+</style>
+<body>
+    <header>header</header>
+    <main>
+        <aside>left</aside>
+        <section>content</section>
+        <aside>right</aside>
+    </main>
+    <footer>footer</footer>
+</body>
+</html>

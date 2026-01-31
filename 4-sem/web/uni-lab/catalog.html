@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalog(page1)</title>
+    <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+  <style>
+     @font-face {
+      font-family: 'Playfair Display';
+      src: url('fonts/playfairdisplay-regular.woff2') format('woff2'),
+           url('fonts/playfairdisplay-regular.woff') format('woff'),
+           url('fonts/playfairdisplay-regular.ttf') format('truetype');
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --primary: #9d7e7e;
+      --primary-dark: #7c5c5c;
+      --secondary: #f8e9e5;
+      --light: #fcf7f6;
+      --dark: #3c2a2a;
+      --accent: #d4a7a7;
+      --text: #3c2a2a;
+      --text-light: #7c6464;
+      --white: white;
+      --border: #e8d5d0;
+    }   
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      line-height: 22px;
+      color: var(--text);
+      background-color: var(--light);
+      display: flex;
+      flex-direction: column;
+    }
+    .page-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;         
+    }
+    .page-content > *:first-child {
+      margin-top: 0 !important;
+    }
+    .page-content > *:last-child {
+      margin-bottom: 0 !important;
+    }
+    .header > .container,
+    .navbar > .container,
+    .site-footer > .container {
+      max-width: 980px;
+      padding: 0 10px;
+      margin: 0 auto;
+    }
+    .header {
+      padding: 20px 0;
+      background-color: var(--secondary);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+
+    }
+    .logo img {
+      margin-right: 15px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .company-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .company-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--dark);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+    }
+    .company-slogan {
+      color: var(--text-light);
+      padding: 15px;
+      font-weight: 500;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .phone {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .feedback-link a {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .feedback-link a:hover {
+      color: var(--primary-dark);
+    }
+
+    .navbar {
+      background-color: var(--primary) !important;
+      padding: 0;
+    }
+    .navbar-nav .nav-link {
+      padding: 15px 20px !important;
+      font-weight: 500;
+    }
+    .navbar-nav .nav-link:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    main h5 {
+      text-align: center;
+      font-weight: 600;
+      color: var(--text);
+    }
+    #slider {
+      overflow: hidden;
+    }
+    #mainCarousel .carousel-inner {
+      height: 450px;
+      overflow: hidden;
+      background-color: transparent;
+    }
+    #mainCarousel .carousel-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    #mainCarousel .carousel-item img {
+      max-height: 100%;
+      max-width:100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    #mainCarousel .carousel-indicators {
+      bottom: -10px;
+    }
+    #mainCarousel .carousel-indicators button {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      margin: 0 5px;
+    }
+    #mainCarousel .carousel-control-prev, #mainCarousel .carousel-control-next {
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary);
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.7
+    }
+    #mainCarousel .carousel-control-prev {
+      left: 10px;
+    }
+    #mainCarousel .carousel-control-next {
+      right: 10px;
+    }
+    #mainCarousel .carousel-control-prev-icon, #mainCarousel .carousel-control-next-icon {
+      width: 20px;
+      height: 20px;
+    }
+    .breadcrumb {
+      margin-bottom: 20px;
+    }
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+    #centerblock { 
+      position: relative; 
+    }
+    #leftblock {
+      background-color: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      padding-bottom: 10px;
+      align-self: flex-start;
+    }
+    #leftblock a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    #leftblock a:hover {
+      color: var(--primary);
+    }
+    #leftblock ul {
+      list-style: none;
+    }
+    #centerblock h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      text-align: center;
+      position: relative;
+    }
+
+    #centerblock h2:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background-color: var(--primary);
+    }
+
+    .card {
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    .product-img {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--light);
+      padding: 20px;
+      overflow: hidden;
+    }
+    .product-img img {
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s;
+    }
+    .card:hover .product-img img {
+      transform: scale(1.05);
+    }
+    .card-body {
+      padding: 15px;
+      text-align: center;
+      background-color: var(--white);
+    }
+    .card-text {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .product-price {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+    .btn {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: var(--light);
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+
+    .site-footer {
+      background-color: var(--dark);
+      padding: 40px 0 !important;
+      color: var(--primary);
+    }
+
+    .footer-menu .nav-link {
+      padding: 0 15px 0 0 !important;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .footer-menu .nav-link:hover {
+      opacity: 1;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-control {
+      border-radius: 5px;
+      padding: 10px 15px;
+      border-color: var(--border);
+    }
+    .form-control:focus {
+      box-shadow: none;
+      border-color: var(--primary);
+    }
+
+    .pagination {
+      margin-top: 30px;
+    }
+    .page-link {
+      color: var(--primary);
+      border-color: var(--border);
+      margin: 0 3px;
+      border-radius: 5px;
+      padding: 8px 15px;
+    }
+    .page-item.active .page-link {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    .page-link:hover {
+      color: var(--primary-dark);
+      background-color: var(--secondary);
+    }
+    .company-info-text p {
+      line-height: 1.8;
+      color: var(--text-light);
+      margin-bottom: 0;
+    }
+    .company-info-text {
+      position: relative;
+      padding-top: 20px;  
+    }
+    .company-info-text::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;           
+      height: 3px;           
+      background-color: var(--primary);
+    }
+    .is-invalid { 
+      border-color: darkred !important; 
+    }
+  </style>
+</head>
+
+<body>
+ <div class="page-content">
+  <!--header-->
+  <header class="header">
+    <div class="container d-flex align-items-center justify-content-between py-2">
+      <div class="d-flex align-items-center">
+        <div class="logo">
+          <img src="https://as1.ftcdn.net/v2/jpg/09/66/07/88/1000_F_966078808_gJusa3tjrgsfmw0030syeX6c8leARMq8.jpg" 
+          alt="Логотип компанії"
+          width="100"
+          height="100">
+        </div>
+        <div class="company-info text-start">
+          <div class="company-name">Auralite</div>
+          <div class="company-slogan">Quality You Can See</div>
+        </div>
+      </div>
+      <div class="header-contacts text-end">
+        <div class="phone"><i class="bi bi-phone me-2"></i>+38(050) 123-45-67</div>
+        <div class="phone"><i class="bi bi-phone me-2"></i>+38(099) 123-45-67</div>
+        <div class="feedback-link"><a class="nav-link" href="#" id="feedbackLink"><i class="bi bi-chat-left-text me-1"></i>Зворотний зв'язок</a></div>
+      </div>
+    </div>
+  </header>
+  
+  <!--main menu -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <!-- кнопка «гамбургер» для мобільних -->
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#mainMenu"
+              aria-controls="mainMenu"
+              aria-expanded="false"
+              aria-label="Переключити навігацію">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-center" id="mainMenu">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="index.html">Головна</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="catalog.html">Каталог</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="#">Доставка та оплата</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="#">Відгуки</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="#">Кошик</a></li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <a href="#" class="text-white me-3" aria-label="Пошук">
+            <i class="bi bi-search fs-5"></i>
+          </a>
+          <a href="#" class="text-white me-3" aria-label="Кошик">
+            <i class="bi bi-bag fs-5"></i>
+          </a>
+          <a href="#" class="text-white" aria-label="Профіль">
+            <i class="bi bi-person fs-5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- slider -->
+<section id="slider" class="overflow-hidden position-relative my-4">
+  <div id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="false">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Слайд 1"></button>
+      <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Слайд 2"></button>
+      <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Слайд 3"></button>
+    </div>
+    <div class="carousel-inner" style="background-color: transparent;">
+      <div class="carousel-item active">
+        <div class="d-flex justify-content-center">
+          <img src="https://b.cdnsbn.com/images/english/banner_newcustsaumay24_1440_1.jpg" >
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="d-flex justify-content-center">
+          <img src="https://beautybarn.in/wp-content/uploads/2022/01/Extended-Sale-Banner-Desktop.png" >
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="d-flex justify-content-center">
+          <img src="https://d.cdnsbn.com/images/english/landbanner_fragmotherdaymay25_1220_1.jpg">
+        </div>
+      </div>
+    </div>
+    
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Попередній</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Наступний</span>
+    </button>
+  </div>
+</section>
+
+  <!--content-->
+  <main class="container my-4" id="content">
+    <div class="row">
+      <aside class="col-12 col-lg-3 mb-4" id="leftblock">
+        <div class="p-3">
+          <h5 class="mb-3">Меню категорій</h5>
+          <ul class="list-unstyled mb-0">
+            <li><a href="#"><i class="bi bi-palette me-2"></i>Макіяж</a></li>
+            <ul>
+              <li><a href="#">Обличчя</a></li>
+              <li><a href="#">Очі</a></li>
+              <li><a href="#">Губи</a></li>
+            </ul>
+            <li><a href="#"><i class="bi bi-droplet me-2"></i>Догляд за шкірою</a></li>
+            <ul>
+              <li><a href="#">Очищення</a></li>
+              <li><a href="#">Тонізування</a></li>
+              <li><a href="#">Зволоження</a></li>
+              <li><a href="#">Засоби для проблемної шкіри</a></li>
+              <li><a href="#">Сонцезахист</a></li>
+            </ul>    
+            <li><a href="#"><i class="bi bi-brush me-2"></i>Догляд за волоссям</a></li>
+            <ul>
+              <li><a href="#">Шампуні та кондиціонери</a></li>
+              <li><a href="#">Маски та олії</a></li>
+              <li><a href="#">Стайлінг</a></li>
+              <li><a href="#">Фарби для волосся</a></li>
+            </ul> 
+            <li><a href="#"><i class="bi bi-moisture me-2"></i>Догляд за тілом</a></li>
+            <ul>
+              <li><a href="#">Гелі для душу та мило</a></li>
+              <li><a href="#">Лосьйони та масла</a></li>
+              <li><a href="#">Скраби та пілінги</a></li>
+            </ul> 
+            <li><a href="#"><i class="bi bi-stars me-2"></i>Парфумерія</a></li>
+            <ul>
+              <li><a href="#">Жіночі парфуми</a></li>
+              <li><a href="#">Чоловічі парфуми</a></li>
+              <li><a href="#">Унісекс</a></li>
+            </ul>    
+            <li><a href="#"><i class="bi bi-flower1 me-2"></i>Органічна косметика</a></li>
+            <li><a href="#"><i class="bi bi-tools me-2"></i>Інструменти та аксесуари</a></li>
+            <li><a href="#"><i class="bi bi-gift me-2"></i>Набори та подарунки</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="col-12 col-lg-9" id="centerblock">
+        <nav class="breadcrumb">
+          <a href="index.html">Головна</a> <span>/</span>
+          Каталог
+        </nav>
+
+        <h2>Вітрина товарів</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <div class="col">
+            <div class="card">
+              <div class="product-img">
+                <img src="https://image.made-in-china.com/365f3j00PSwlThpJHtcE/Luxury-Custom-Logo-Private-Label-Round-Cute-Organic-Gentle-Brithening-Moisturizing-Korean-Lip-Balm-OEM.webp" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">Маска-бальзам Laneige Lip Sleeping Mask для губ</p>
+                <div class="product-price">399 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="location.href='product_page.html'">
+              <div class="product-img">
+                <img src="https://thekshop.ca/cdn/shop/products/SKIN1004MadagascarCentellaPoremizingFreshAmpoule.jpg?v=1659488673" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">SKIN1004 Poremizing Fresh Ampoule</p>
+                <div class="product-price">549 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="product-img">
+                <img src="https://candybodyshop.com/content/images/29/536x536l50nn0/zvolozhuuchyi-toner-z-efektom-pilinhu-round-lab-1025-dokdo-toner-200-ml-69712455820349.jpeg" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">Зволожуючий тонер ROUND LAB 1025 Dokdo Toner </p>
+                <div class="product-price">499 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>        
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <div class="product-img">
+                <img src="https://images-na.ssl-images-amazon.com/images/I/61Prm4r-MpL._UL500_.jpg" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">Палітра тіней для повік Makeup Revolution</p>
+                <div class="product-price">450 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="product-img">
+                <img src="https://beautydone.com.ua/content/images/4/536x536l50mc70/hlyniana-maska-u-stiku-skin1004-madagascar-centella-poremizing-quick-clay-stick-mask-27g-73468169426676.png" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">SKIN1004 Poremizing Quick Clay Stick Mask</p>
+                <div class="product-price">599 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="product-img">
+                <img src="https://admin.only.kz/storage/product/images66659311c0bf4.png" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">Очищувальний гель з морською водою ROUND LAB</p>
+                <div class="product-price">449 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>        
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <div class="product-img">
+                <img src="https://images.prom.ua/5376444620_zhidkie-matovye-rumyana.jpg" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">Рум'яна Makeup Revolution Blush Palette </p>
+                <div class="product-price">399 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="product-img">
+                <img src="https://sokoskins.shop/cdn/shop/products/2022-08-11115523_1200x1200.webp?v=1665809655" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">SKIN1004 Poremizing Deep Cleansing Foam</p>
+                <div class="product-price">529 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="product-img">
+                <img src="https://aloevera.com.ua/content/images/37/536x536l50nn0/sontsezakhysnyi-krem-z-morskoiu-vodoiu-round-lab-1025-dokdo-sunscreen-50-ml-87304195915888.png" alt="Товар">
+              </div>
+              <div class="card-body">
+                <p class="card-text">Зволожуючий крем з березовим соком ROUND LAB </p>
+                <div class="product-price">649 грн</div>
+                <button class="btn">Додати в кошик</button>
+              </div>
+            </div>        
+          </div>
+        </div>
+
+        <nav class="d-flex justify-content-center" aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&lsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&rsaquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </section>
+    </div>
+  </main>
+
+  <!-- feedback Modal -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-3" id="feedback">
+        <h5 class="modal-title">Зворотний зв'язок</h5>
+        <form id="feedbackForm">
+          <div class="mb-2">
+            <label>Ваше ім'я *</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Телефон *</label>
+            <input type="text" name="phone" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Email *</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Повідомлення</label>
+            <textarea name="message" rows="4" class="form-control"></textarea>
+          </div>
+          <div class="mb-2">
+            <label>Промокод * </label>
+            <input type="text" name="promo" class="form-control" required>
+          </div>
+          <button type="submit" class="btn">Надіслати</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <section class="company-info-text container my-5">
+  <div class="row">
+    <div class="col-md-6 ">
+      <p>
+        Компанія «Auralite» працює на ринку преміальної косметики вже понад 8 років. За цей час ми розробили більше ніж 1 500 унікальних формул, випустили понад 300 успішних продуктів та здобули довіру клієнтів у 12 країнах світу. Наша команда налічує понад 50 професіоналів — хіміків, технологів та візажистів, які працюють в офісах у Києві та Львові.
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p>
+        Одним із ключових напрямків нашої діяльності є створення натуральної косметики без шкідливих компонентів. Ми співпрацюємо з понад 100 постійними партнерами та застосовуємо передові технології екстракції рослинних екстрактів. Відділ R&amp;D, що складається з 15 спеціалістів, невпинно досліджує нові тренди та впроваджує інновації в кожен наш продукт.
+      </p>
+    </div>
+  </div>
+</section>
+
+  <!--footer-->
+  <footer class="site-footer py-4">
+    <div class="container">
+      <div class="row mb-4">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <nav class="footer-menu">
+            <ul class="nav">
+              <li class="nav-item"><a class="nav-link text-white" href="index.html">Головна</a></li>
+              <li class="nav-item"><a class="nav-link text-white" href="#">Каталог</a></li>
+              <li class="nav-item"><a class="nav-link text-white" href="#">Контакти</a></li>
+              <li class="nav-item"><a class="nav-link text-white" href="#">Q&A</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="col-md-6">
+          <div class="newsletter-container">
+            <p class="mb-3 fs-5">Отримуйте інформацію про нові товари та спеціальні пропозиції</p>
+            <div class="d-flex">
+              <input type="email" class="form-control me-2" placeholder="Ваш email" style="border-radius: 5px 0 0 5px; border: none;">
+              <button class="btn" style="border-radius: 0 5px 5px 0;">Підписатися</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="border-secondary my-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>© 2025 Auralite</div>
+        <div>
+          <a href="#" class="text-white text-decoration-none me-3">Політика конфіденційності</a>
+          <a href="#" class="text-white text-decoration-none">Умови використання</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    $(function() {
+    var phoneRegex = /^[0-9\+\-\s\(\)]+$/;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var promoRegex= /^[0-9]+$/;
+
+    //реакція в реальному часі
+    $('input[name="phone"]').on('input blur', function() {
+      var $el = $(this);
+      if (phoneRegex.test($el.val())) {
+        $el.removeClass('is-invalid');
+      } else {
+        $el.addClass('is-invalid');
+      }
+    });
+
+    $('input[name="email"]').on('input blur', function() {
+      var $el = $(this);
+      if (emailRegex.test($el.val())) {
+        $el.removeClass('is-invalid');
+      } else {
+        $el.addClass('is-invalid');
+      }
+    });
+    
+    $('input[name="promo"]').on('input blur', function() {
+      var $el = $(this);
+      if (promoRegex.test($el.val())) {
+        $el.removeClass('is-invalid');
+      } else {
+        $el.addClass('is-invalid');
+      }
+    });
+
+    // показ модалки
+    $('#feedbackLink').on('click', function(e) {
+      e.preventDefault();
+      $('#feedbackModal').modal('show');
+    });
+
+    // 3) під час submit - повна валідація
+    $('#feedbackForm').on('submit', function(e) {
+      var valid = true;
+      var $form = $(this);
+      var $phone = $form.find('input[name="phone"]');
+      var $email = $form.find('input[name="email"]');
+      var $promo = $form.find('input[name="promo"]');
+
+      //перевірка телефону+email
+      if (!phoneRegex.test($phone.val())) {
+        $phone.addClass('is-invalid');
+        valid = false;
+      }
+      if (!emailRegex.test($email.val())) {
+        $email.addClass('is-invalid');
+        valid = false;
+      }
+      if (!promoRegex.test($promo.val())) {
+        $promo.addClass('is-invalid');
+        valid = false;
+      }
+      //перевірка всіх requiredполів
+      $form.find('input[required]').each(function() {
+        var $f = $(this);
+        if (!$f.val()) {
+          $f.addClass('is-invalid');
+          valid = false;
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault();
+      }
+    });
+  });
+  </script>
+</body>
+</html>

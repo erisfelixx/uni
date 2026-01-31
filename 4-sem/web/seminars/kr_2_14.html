@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Створення таблиці (14)</title>
+      <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+
+  <style>
+    body {
+        background-color: #f8f9fa;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    .page-header {
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+        background-color: #f6faff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        font-weight: 800;
+    }   
+    .control-panel {
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+        
+    .instruction-panel {
+        background-color: #f6faff;
+        border-left: 4px solid #0d6efd;
+        padding: 1rem;
+        border-radius: 0 0.5rem 0.5rem 0;
+        margin-bottom: 1.5rem;
+    }  
+    #colCount {
+      width: 50px;
+    }      
+
+    #editorTable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+        
+    #editorTable th {
+            background-color: #0d6efd;
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: 400;
+            border: none;
+    }
+        
+    #editorTable td {
+            padding: 0.5rem;
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+            background-color: white;
+    } 
+    .selected td {
+        background-color: #e0e1f1 !important;
+    }
+  </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header text-center">
+            <h1>Візуальний елемент "Таблиця"</h1>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="control-panel">
+                    <h4 class="mb-3">Налаштування таблиці</h4>
+                    
+                    <div class="mb-3">
+                        <label for="colCount" class="form-label">Кількість стовпчиків:</label>
+                        <input type="number" class="form-control" id="colCount" min="1" value="3">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" id="createTable" onclick="createTable();">Створити таблицю </button>
+                        <button class="btn btn-danger" id="clearTable" onclick="clearTable();">Видалити таблицю</button>
+                    </div>
+                </div>
+                
+                <div class="instruction-panel">
+                    <h5>Примітки:</h5>
+                    <ul>
+                        <li>Створіть таблицю, вказавши кількість стовпчиків</li>
+                        <li>Клікніть на рядок, щоб виділити його</li>
+                        <li>Натисніть на текст, щоб редагувати його</li>
+                        <li>Кнопка "Оновити" змінює кількість стовпчиків у таблиці</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <div class="table-container">
+                    <div class="group mb-4">
+                        <button class="btn btn-dark" id="addRow" onclick="addRow();">Додати рядок</button>
+                        <button class="btn btn-dark" id="deleteRow" onclick="deleteRow();">Видалити останній рядок</button>
+                        <button class="btn btn-dark" id="deleteSelectedRow" onclick="deleteSelectedRow();">Видалити обраний рядок</button>
+                        <button class="btn btn-secondary" id="updateColumns" onclick="updateColumns();">Оновити</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="editorTable" class="table"></table>       <!--з скрипта-->>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <script>
+    var colCountInput = document.getElementById("colCount");
+    var createTableBtn = document.getElementById("createTable");
+    var clearTableBtn = document.getElementById("clearTable");
+    var addRowBtn = document.getElementById("addRow");
+    var deleteRowBtn = document.getElementById("deleteRow");
+    var deleteSelRowBtn = document.getElementById("deleteSelectedRow");
+    var updateColsBtn = document.getElementById("updateColumns");
+    var editorTable = document.getElementById("editorTable");
+    var selectedRow = null;
+
+    //створення таблиці, видаляючи попередню
+    function createTable() {       
+      var cols = parseInt(colCountInput.value, 10);
+      editorTable.innerHTML = "";                    //!очищення попередньої
+
+      var header = document.createElement("tr");      //створення заголовка
+      for (var i = 0; i < cols; i++) {
+        var th = document.createElement("th");
+        th.textContent = "Заголовок";
+        th.contentEditable = "true";
+        header.appendChild(th);
+      }
+      editorTable.appendChild(header);
+
+      addRow();
+    }
+
+    //видалення таблиці
+    function clearTable() {
+      editorTable.innerHTML = "";
+      selectedRow = null;
+    }
+
+    //додавання новго рядка
+    function addRow() {
+      var cols = editorTable.rows[0]?.cells.length || parseInt(colCountInput.value, 10);
+      var row = document.createElement("tr");
+      for (var i = 0; i < cols; i++) {
+        var cell = document.createElement("td");
+        cell.textContent = "Поле";
+        cell.contentEditable = "true";
+        row.appendChild(cell);
+      }
+      row.addEventListener("click", function() {               // обробник кліку: виділити цей рядок
+        if (selectedRow) selectedRow.classList.remove("selected");
+        selectedRow = this;
+        this.classList.add("selected");
+      });
+      editorTable.appendChild(row);
+    }
+
+    //видалення останнього рядка
+    function deleteRow() {
+      var len = editorTable.rows.length;
+      if (len > 1) editorTable.deleteRow(len - 1);        //щоб не видалити заголовок
+    }
+
+     //видалення вибраного рядка
+    function deleteSelectedRow() {
+      if (selectedRow && selectedRow.rowIndex > 0) {
+        editorTable.deleteRow(selectedRow.rowIndex);
+        selectedRow = null;
+      }
+    }
+
+    //зміна кількості стовпців -> оновлення
+    function updateColumns() {
+      var cols = parseInt(colCountInput.value, 10);
+      Array.from(editorTable.rows).forEach(function(r, idx) {
+        while (r.cells.length < cols) {
+          var newCell = document.createElement(idx === 0 ? "th" : "td");
+          newCell.textContent = idx === 0 ? "Заголовок" : "Поле";
+          newCell.contentEditable = "true";
+          r.appendChild(newCell);
+        }
+        while (r.cells.length > cols) {
+          r.deleteCell(r.cells.length - 1);
+        }
+      });
+    }
+  </script>
+</body>
+</body>
+</html>
+

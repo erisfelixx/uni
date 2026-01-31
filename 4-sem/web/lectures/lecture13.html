@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lecture13</title>
+
+    <script>
+        //третій масив з унікальних елементів, що устрічаються хоча б в одному з двох інших масивів
+        const arr1 = [9, 71, 2, 3, 16, 11, "ручка", "зошит"];
+        const arr2 = [20, 5, 7, -2, 3, 1, "олівець"];
+        const uniqueArr = Array.from(new Set([...arr1, ...arr2]));
+
+        console.log("перший масив: ", arr1);
+        console.log("другий масив: ", arr2);
+        console.log("масив з унікальними елементами: ", uniqueArr);
+
+        //парні числа з додатніх елементів масиву
+        const positiveNumbers = uniqueArr.filter(num => 
+        typeof num === 'number' && num > 0 && num % 2 === 0);
+        console.log("парні додатні числа: ", positiveNumbers);
+
+        //повідомлення, якщо хоча б один елемент масиву дорівнює нулю
+        if (uniqueArr.includes(0)) {
+            console.log("у масиві є елемент, що дорівнює нулю");
+        }
+
+        //вивести індекс елемента масиву, значення якого = 5
+        const indexOfFive = uniqueArr.indexOf(5);
+        if (indexOfFive !== -1) {
+            console.log("індекс елемента, що дорівнює 5: ", indexOfFive);
+        } 
+        else {
+            console.log("елемент 5 не знайдено в масиві");
+        }
+
+        //добуток всіх елементів масиву
+        //якщо у масиві є слова, вони ігноруютьсч
+        const product = uniqueArr.reduce((acc, curr) => 
+        typeof curr === 'number' ? acc * curr : acc, 1);
+        console.log("Добуток всіх числових елементів масиву:", product);
+
+
+        //якщо масив містить і числа, і рядки, розділяємо їх
+        const numericElements = uniqueArr.filter(e => typeof e === 'number');
+        const stringElements = uniqueArr.filter(e => typeof e === 'string');
+
+        //відсортувати елементи масиву в алфавітному порядку
+        const sortedStrings = stringElements.slice().sort((a, b) => a.localeCompare(b));
+        console.log("відсортований масив рядкових елементів (за алфавітом): ", sortedStrings);
+
+        //відсортувати чисельний масив, не беручи до уваги знак.
+        const sortedNumeric = numericElements.slice().sort((a, b) => Math.abs(a) - Math.abs(b));
+        console.log("відсортований масив числових елементів (за модулем): ", sortedNumeric);
+
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

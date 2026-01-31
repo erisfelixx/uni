@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lecture12_3</title>
+</head>
+<body>
+    <script>
+    (function() {
+        const getCoordinate = (label) => {
+            let value;
+            do {
+                const input = prompt(`введіть координату ${label} (число):`);
+                if (input === null) {
+                    alert('відмінено користувачем');
+                    throw new Error('користувач скасував введення');
+                }
+                value = parseFloat(input.replace(',', '.'));
+            } while (isNaN(value));
+            return value;
+        };
+        //для визначення чверті
+        function getQuadrant(x, y) {
+            if (x > 0 && y > 0) return 1;
+            if (x < 0 && y > 0) return 2;
+            if (x < 0 && y < 0) return 3;
+            if (x > 0 && y < 0) return 4;
+           if (x === 0 && y === 0) return 'центр координат';
+            if (x === 0) return 'на осі Y';
+            if (y === 0) return 'на осі X';
+        }
+        const x1 = getCoordinate('x1');
+        const y1 = getCoordinate('y1');
+        const x2 = getCoordinate('x2');
+        const y2 = getCoordinate('y2');
+        const q1 = getQuadrant(x1, y1);
+        const q2 = getQuadrant(x2, y2);
+
+        //обидві точки в одній чверті
+        if (typeof q1 === 'number' && q1 === q2) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const distance = Math.hypot(dx, dy);
+            alert(`Обидві точки в ${q1}-й чверті. Відстань між ними: ${distance.toFixed(3)}`);
+        } else {
+
+            const describe = function(x, y, q) {
+                if (typeof q === 'number') return `${q}-я чверть`;
+                return q;             //центр або вісь
+            };
+            
+            const showInfo = (x, y, q, idx) => {
+                alert(`Точка ${idx}: (${x}, ${y}) → ${describe(x, y, q)}`);
+            };
+            showInfo(x1, y1, q1, 1);
+            showInfo(x2, y2, q2, 2);
+        }
+        })
+        ();
+</script>
+</body>
+</html>

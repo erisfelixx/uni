@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<style>
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; 
+    background-color: rgb(229, 229, 229);
+}
+#container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 10px;
+    gap: 10px;
+    max-width: 1200px;
+    padding: 10px;
+    background-color: white;
+}
+.block {
+    min-height: 100px;
+    min-width: 200px;
+    border-radius: 5px;
+}
+.blue {
+    background-color: lightskyblue;
+}
+.yellow {
+    background-color: gold;
+}
+.pink {
+    background-color: hotpink;
+}
+.grow1 {
+    flex-grow: 1;
+}
+.grow2 {
+    flex-grow: 2;
+}
+.grow3 {
+    flex-grow: 3;
+}
+
+</style>
+
+<body>
+    <div id="container">
+        <div class="block blue grow1"></div>
+        <div class="block blue grow1"></div>
+        <div class="block blue grow1"></div>
+        <div class="block yellow grow1"></div>
+        <div class="block yellow grow1"></div>
+        <div class="block yellow grow2"></div>
+        <div class="block pink grow2"></div>
+        <div class="block pink grow3"></div>
+    </div>
+</body>
+</html>

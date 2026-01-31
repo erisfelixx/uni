@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>seminar8</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }  
+        .country-card {
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+        .country-card.active {
+            border-color: blue;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .landmark-img {
+            height: 200px;
+            object-fit: cover;
+        }        
+        .selected-icon {
+            position: absolute;
+            inset: 10px 10px auto auto;
+            background-color: green;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .landmark-card {
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            position: relative;
+        }
+        .landmark-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px black (0,0,0,0.1);
+        }
+        .landmark-card.selected {
+            border-color: green;
+            box-shadow: 0 0 0 0.25rem black (25, 135, 84, 0.25);
+        }
+        #totalPrice {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .country-flag-lg {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 8px black (0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mb-4">Туристичний планувальник подорожей</h1>
+                <p class="lead">Оберіть країну, щоб переглянути її визначні пам'ятки</p>
+            </div>
+        </div>
+        
+        <!-- можливі опції -->
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4 mb-5">
+            <div class="col">
+                <div class="card h-100 country-card" data-country="ukraine">
+                    <div class="card-body text-center d-flex align-items-center justify-content-center">
+                        <h5 class="card-title mb-0">Україна</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 country-card" data-country="france">
+                    <div class="card-body text-center d-flex align-items-center justify-content-center">
+                        <h5 class="card-title mb-0">Франція</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 country-card" data-country="italy">
+                    <div class="card-body text-center d-flex align-items-center justify-content-center">
+                        <h5 class="card-title mb-0">Італія</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 country-card" data-country="japan">
+                    <div class="card-body text-center d-flex align-items-center justify-content-center">
+                        <h5 class="card-title mb-0">Японія</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 country-card" data-country="egypt">
+                    <div class="card-body text-center d-flex align-items-center justify-content-center">
+                        <h5 class="card-title mb-0">Єгипет</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- обрана країна: -->
+        <div id="countryInfo" class="row mb-4 d-none">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center" id="flagContainer">
+                            <img id="countryFlagLg" src="" alt="Прапор країни" class="country-flag-lg me-4">
+                            <h2 id="countryNameDisplay" class="mb-0"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- пам'ятки -->
+        <div id="landmarksContainer" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4 d-none">
+            <!-- динамічне додавання пам'яток -->
+        </div>
+        
+        <!-- панель розрахунку -->
+        <div id="calculationPanel" class="row mt-4 d-none">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h4>Обрані пам'ятки: <span id="selectedCount">0</span></h4>
+                                <ul id="selectedList" class="list-group list-group-flush mt-3">
+                                    <!-- обрані пам'ятки -->
+                                </ul>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <div class="d-flex justify-content-md-end align-items-center">
+                                    <h4 class="me-3 mb-0">Загальна вартість:</h4>
+                                    <div id="totalPrice" class="badge bg-success px-3 py-2">0 грн</div>
+                                </div>
+                                <button id="resetButton" class="btn btn-danger mt-3">
+                                    <i class="bi bi-trash me-2"></i>Скинути вибір
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+<script>
+    const countries = {
+        ukraine: {
+            name: "Україна",
+            flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Ukraine.svg/2560px-Flag_of_Ukraine.svg.png",
+            landmarks: [
+                {
+                    name: "Софія Київська",
+                    image: "https://myukraine.org.ua/wp-content/uploads/2017/02/sofia-1-min.jpg",
+                    description: "Софія Київська — християнський собор в центрі Києва, пам'ятка української архітектури та монументального живопису XI — XVIII століть. Одна з найголовніших християнських святинь Східної Європи.",
+                    price: 200
+                },
+                {
+                    name: "Львівська Опера",
+                    image: "https://fest-tour.com.ua/wp-content/uploads/2020/03/Depositphotos_52111881_xl-2015.jpg",
+                    description: "Львівський національний академічний театр опери та балету імені Соломії Крушельницької — операний театр у центрі Львова, збудований у класичному стилі.",
+                    price: 300
+                },
+                {
+                    name: "Кам'янець-Подільська фортеця",
+                    image: "https://ukrinfo-data.s3.amazonaws.com/media/435416/conversions/Screenshot_2-extra-extra-large.webp",
+                    description: "Кам'янець-Подільська фортеця — фортифікаційна споруда, що розташована в історичному центрі Кам'янця-Подільського, на високому скелястому півострові.",
+                    price: 150
+                }
+            ]
+        },
+        france: {
+            name: "Франція",
+            flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/2560px-Flag_of_France.svg.png",
+            landmarks: [
+                {
+                    name: "Ейфелева вежа",
+                    image: "https://travel.24tv.ua/resources/photos/news/202010/1434043.jpg?v=1661267619000",
+                    description: "Ейфелева вежа — металева башта в центрі Парижа, найвідоміша архітектурна пам'ятка Франції. Названа на честь головного конструктора Гюстава Ейфеля.",
+                    price: 500
+                },
+                {
+                    name: "Лувр",
+                    image: "https://fr.igotoworld.com/frontend/webcontent/websites/26/images/gallery/7545_800x600_Luvr_5.jpg",
+                    description: "Лувр — один з найбільших і найвідоміших музеїв світу, розташований в самому центрі Парижа. Славиться колекцією витворів мистецтва, включаючи Мона Лізу.",
+                    price: 350
+                },
+                {
+                    name: "Собор Паризької Богоматері",
+                    image: "https://waytravel.com.ua/wp-content/uploads/2024/07/notr-dam-de-pari.jpg",
+                    description: "Нотр-Дам-де-Парі є однією з найвідоміших готичних будівель у світі, присвячений Діві Марії.",
+                    price: 400
+                }
+            ]
+        },
+        italy: {
+            name: "Італія",
+            flag: "https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg",
+            landmarks: [
+                {
+                    name: "Колізей",
+                    image: "https://atlanttour.com.ua/wp-content/uploads/2023/10/photo_2023-10-16_16-01-37.jpg",
+                    description: "Колізей — найбільший амфітеатр Стародавнього Риму, символ імперського Риму та одне з нових семи чудес світу.",
+                    price: 450
+                },
+                {
+                    name: "Венеціанські канали",
+                    image: "https://i0.wp.com/travelinto.info/wp-content/uploads/sites/1/2024/01/veneczianski-kanaly.jpg?ssl=1",
+                    description: "Венеція — унікальне місто на воді з мережею каналів, яке відоме своєю архітектурою, гондолами та карнавалами.",
+                    price: 850
+                },
+                {
+                    name: "Пізанська вежа",
+                    image: "https://turpoisk.ua/images/blog/piza-bashnia/piza-bashnia111.jpg",
+                    description: "Пізанська вежа — частина ансамблю Пізанського собору, відома своїм нахилом, який створює ілюзію падіння.",
+                    price: 250
+                }
+            ]
+        },
+        japan: {
+            name: "Іспанія",
+            flag: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg",
+            landmarks: [
+                {
+                    name: "Саграда Фамілія",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Sagrada_Familia_8-12-21_%281%29.jpg/1200px-Sagrada_Familia_8-12-21_%281%29.jpg",
+                    description: "Саграда Фамілія — велика недобудована базиліка в Барселоні, спроектована Антоніо Ґауді; будівництво триває з 1882 року й фінансується винятково за рахунок пожертвувань.",
+                    price: 200
+                },
+                {
+                    name: "Альгамбра",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Vista_de_la_Alhambra.jpg",
+                    description: "Альгамбра — мавританський палацово-фортифікаційний комплекс IX–XIV століть у Гранаді, відомий своїми різьбленими арками, садами і фонтанами.",
+                    price: 300
+                },
+                {
+                    name: "Парк Ґуель",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Parc_G%C3%BCell_27-2-12.jpg/1200px-Parc_G%C3%BCell_27-2-12.jpg",
+                    description: "Парк Ґуель — міський парк у Барселоні, спроєктований Антоніо Ґауді, відзначається яскравою мозаїкою та вигнутими лавками з видовженими формами.",
+                    price: 250
+                }
+            ]
+        },
+        egypt: {
+            name: "Єгипет",
+            flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Egypt.svg/800px-Flag_of_Egypt.svg.png",
+            landmarks: [
+                {
+                    name: "Піраміди Гізи",
+                    image: "https://trips.com.ua/wp-content/uploads/2022/11/giza-pyramids-1.jpg",
+                    description: "Піраміди Гізи — комплекс давньоєгипетських пірамід, розташований на плато Гіза, включаючи Велику піраміду Хеопса — єдине з Семи чудес світу, що збереглося.",
+                    price: 600
+                },
+                {
+                    name: "Храм Карнак",
+                    image: "https://secretland.info/wp-content/uploads/2020/02/karnak_1-1.jpg.webp",
+                    description: "Храм Карнак — найбільший храмовий комплекс Стародавнього Єгипту, присвячений богу Амону-Ра, розташований поблизу міста Луксор.",
+                    price: 400
+                },
+                {
+                    name: "Долина Царів",
+                    image: "https://trips.com.ua/wp-content/uploads/2022/11/valley-of-the-kings.jpg",
+                    description: "Долина Царів — долина в Єгипті, де протягом століть будувалися гробниці для фараонів та могутніх вельмож, включаючи гробницю Тутанхамона.",
+                    price: 450
+                }
+            ]
+        }
+    };
+
+    //для відстеження стану
+    let selectedCountry = null;
+    let selectedLandmarks = [];
+    let totalPrice = 0;
+
+    const countryCards = document.querySelectorAll('.country-card');
+    const countryInfo = document.getElementById('countryInfo');
+    const countryFlagLg = document.getElementById('countryFlagLg');
+    const countryNameDisplay = document.getElementById('countryNameDisplay');
+    const landmarksContainer = document.getElementById('landmarksContainer');
+    const calculationPanel = document.getElementById('calculationPanel');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const resetButton = document.getElementById('resetButton');
+    const selectedCountElement = document.getElementById('selectedCount');
+    const selectedListElement = document.getElementById('selectedList');
+
+    countryCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const country = card.dataset.country;  // позначення активної країни 
+            countryCards.forEach(c => c.classList.remove('active')); 
+            card.classList.add('active');
+            
+            displayCountry(country);
+        });
+    });
+    
+    resetButton.addEventListener('click', resetSelection);
+
+    //функція відображення інформації про країну
+    function displayCountry(country) {
+        resetSelection();
+        selectedCountry = country;
+        const countryData = countries[country];
+        
+        countryFlagLg.src = countryData.flag;
+        countryFlagLg.alt = `Прапор ${countryData.name}`;
+        countryNameDisplay.textContent = countryData.name;
+        
+        landmarksContainer.innerHTML = '';
+        countryData.landmarks.forEach((landmark, index) => {
+            const landmarkElement = createLandmarkCard(landmark, index);
+            landmarksContainer.appendChild(landmarkElement);
+        });
+        
+        countryInfo.classList.remove('d-none');       //показ прихованих блоків
+        landmarksContainer.classList.remove('d-none');
+        calculationPanel.classList.remove('d-none');
+    }
+
+    //створення картки з пам'ятками
+    function createLandmarkCard(landmark, index) {
+        const colDiv = document.createElement('div');
+        colDiv.className = 'col';
+        
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card landmark-card h-100';
+        cardDiv.dataset.landmarkIndex = index;
+        cardDiv.dataset.landmarkName = landmark.name;
+        cardDiv.dataset.landmarkPrice = landmark.price;
+        
+        const cardContent = `
+            <div class="selected-icon">
+                <i class="bi bi-check"></i>
+            </div>
+            <img src="${landmark.image}" class="card-img-top landmark-img" alt="${landmark.name}">
+            <div class="card-body">
+                <h5 class="card-title">${landmark.name}</h5>
+                <p class="card-text">${landmark.description}</p>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <span class="price-badge badge bg-primary">Вартість: ${landmark.price} грн</span>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="switch-${selectedCountry}-${index}">
+                    <label class="form-check-label" for="switch-${selectedCountry}-${index}">Обрати</label>
+                </div>
+            </div>
+        `;
+        cardDiv.innerHTML = cardContent;
+        colDiv.appendChild(cardDiv);
+        
+        //обробник кліка по всій картці
+        cardDiv.addEventListener('click', function(e) {
+            if (e.target.type === 'checkbox') return;  // "уникнення" подвоєння
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            const event = new Event('change');
+            checkbox.dispatchEvent(event);
+        });
+        
+        //обробник подій для перемикача
+        const checkbox = cardDiv.querySelector('input[type="checkbox"]');
+        checkbox.addEventListener('change', function() {
+            const card = this.closest('.landmark-card');
+            const landmarkName = card.dataset.landmarkName;
+            const landmarkPrice = parseInt(card.dataset.landmarkPrice);
+            
+            if (this.checked) {
+                card.classList.add('selected');
+                
+                //ддаємо/видаляємо пам'ятку до обраних
+                selectedLandmarks.push({
+                    country: selectedCountry,
+                    name: landmarkName,
+                    price: landmarkPrice
+                });
+                totalPrice += landmarkPrice;                
+                addToSelectedList(landmarkName, landmarkPrice);
+            } else {
+                card.classList.remove('selected');
+                selectedLandmarks = selectedLandmarks.filter(item =>
+                    !(item.country === selectedCountry && item.name === landmarkName)
+                );
+                totalPrice -= landmarkPrice;
+                removeFromSelectedList(landmarkName);
+            }
+            updateTotalDisplay();
+        });
+        
+        return colDiv;
+    }
+
+    //додавання пам'ятки до списку обраних пам'яток
+    function addToSelectedList(name, price) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.dataset.name = name;
+        
+        li.innerHTML = `
+            <span>${name}</span>
+            <span class="badge bg-secondary">${price} грн</span>
+        `;
+        
+        selectedListElement.appendChild(li);
+    }
+
+    //видалення пам'ятки
+    function removeFromSelectedList(name) {
+        const item = selectedListElement.querySelector(`[data-name="${name}"]`);
+        if (item) {
+            item.remove();
+        }
+    }
+
+    //оновлення загальної вартості з пам'ятками
+    function updateTotalDisplay() {
+        totalPriceElement.textContent = `${totalPrice} грн`;
+        selectedCountElement.textContent = selectedLandmarks.length;
+        
+        if (totalPrice > 1000) {
+            totalPriceElement.className = 'badge bg-danger px-3 py-2';
+        } else if (totalPrice > 500) {
+            totalPriceElement.className = 'badge bg-warning px-3 py-2';
+        } else {
+            totalPriceElement.className = 'badge bg-success px-3 py-2';
+        }
+    }
+
+    //функція скидання вибору пам'яток
+    function resetSelection() {
+        selectedLandmarks = [];
+        totalPrice = 0;
+
+        const landmarkCards = document.querySelectorAll('.landmark-card'); //візуал
+        landmarkCards.forEach(card => {
+            card.classList.remove('selected');
+        });
+        const checkboxes = document.querySelectorAll('.landmark-card input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        selectedListElement.innerHTML = '';
+        updateTotalDisplay();
+    }
+
+    //україна за замовчуванням
+    window.addEventListener('DOMContentLoaded', () => {
+        const defaultCountryCard = document.querySelector('[data-country="ukraine"]');
+        defaultCountryCard.click();
+        
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Gothic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+    
+    <title>seminar6</title>
+    <style>
+        body {
+            background-color: floralwhite;
+            font-family: "Special Gothic Expanded One", sans-serif;
+        }
+        
+        .main_text {
+            font-family: "Special Gothic", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+        .header {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%),
+                        url(seminar6_ph/newyorkcity-1744793046156-9631.jpg) center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 100%;
+            min-height: 700px;
+        }
+        .btn {
+            background-color: rgb(124, 72, 67);
+            color: white;
+            border: 0;
+        }
+        .btn:hover {
+            background-color:  #4e2d1f;
+        }
+        .type_btn {
+            background-color: rgb(142, 91, 82);
+            color: floralwhite;
+            font-size: 20px;
+            height: 70px;
+        }
+
+        .motive {      
+            position: relative;
+            overflow: hidden;
+            min-height: 50vh;
+            text-align: center;
+        }
+        .motive::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url(seminar6_ph/Architecture-Challenges-Every-Architect-Faces-Today-2.jpg) center/cover no-repeat;
+            opacity: 0.5;    
+            filter: blur(2px);            
+            z-index: 1;                  
+        }
+        .motive > .container {
+            position: relative;
+            z-index: 2;
+        }
+        .result_block {
+          position: relative;   
+          margin-top: -80px; 
+          z-index: 2;         
+        }
+        .list-element {
+            background-color: rgb(222, 218, 209);
+        }
+        .process {
+            background-color: rgb(124, 72, 67);
+            min-height: 200px;
+            display: flex;             
+            justify-content: center;      
+            align-items: center;     
+        }
+        .work-img {
+            width: 100%;
+            height: auto;
+        }
+        .ad{ 
+            background: url(seminar6_ph/wallpaperflare.com_wallpaper.jpg) no-repeat center;
+            background-size: cover;
+            min-height: 200px;
+        }
+
+        .footer_bottom {
+            min-height: 50px;
+            background-color: rgb(196, 196, 196);
+            display: flex;             
+            justify-content: center;      
+            align-items: center;     
+        }
+        .no-bullets { 
+            list-style: none; 
+        }
+
+    </style>
+</head>
+
+
+<body>
+    <section class="header"> 
+        <div class="container pt-5">
+            <nav class="navbar navbar-expand-lg bg-transparent">
+                <a class="navbar-brand" href="">
+                    <img src="seminar6_ph/skyline.png" width="35" height="35" class="d-inline-block align-top" alt="logo">
+                    <strong>Skyline Builders</strong>
+                </a>
+
+              <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navMenu"> 
+              <span class="navbar-toggler-icon"></span> 
+              </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                    <ul class="navbar-nav">
+                      <li class="nav-item active">
+                        <a class="nav-link" href="">Main</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="">Projects</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="">Offers</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="">Price</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="">QA</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="">Log in</a>
+                      </li>
+                    </ul>
+                    <button class="btn btn-dark ms-3" type="button">Registration</button>
+                  </div>
+            </nav>
+            <div class="text-center mx-auto mt-5" style="max-width: 80%;">
+                <h1 class="text-white w-75 mx-auto"> Where vision meets innovation.</h1>
+                <h5 class="text-light w-100 mx-auto py-3" style="width: 90%; text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);">
+                  Skyline Builders is a team of professionals dedicated to crafting innovative and reliable construction projects. We blend modern technology with creative design solutions to ensure your space is both stylish and functional.
+                </h5>
+                <div class="d-flex justify-content-center gap-3">
+                  <button class="btn type_btn" style="width: 45%;">Our Projects</button>
+                  <button class="btn type_btn" style="width: 45%;">Contact Us!</button>
+                </div>
+            </div>
+        </div>        
+    </section>
+
+    <section  class="py-5" style="min-height: 600px;">
+        <div class="container text-center">
+          <h1>The best for begginers</h1>
+
+          <div class="row justify-content-center g-2 mt-4">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">Career Opportunities</h5>
+                    <p class="card-text main_text">
+                      Dreaming of a career in construction or architecture? We provide hands-on training and guidance to help you master essential skills and kick-start your professional journey.
+                    </p>
+                  </div>
+                  <button type="button" class="btn type_btn w-100">More about careers</button>
+                </div>
+              </div>
+        
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">Project Development</h5>
+                    <p class="card-text main_text">
+                      Ready to build your dream space? Our expert team manages every stage—from concept and design to full-scale construction—ensuring top-quality results every time.
+                    </p>
+                  </div>
+                  <button type="button" class="btn type_btn w-100">More about projects</button>
+                </div>
+              </div>
+        
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">Partnership & Investment</h5>
+                    <p class="card-text main_text">
+                      Looking to collaborate or invest in forward-thinking construction ventures? Partner with us for transparent, profitable, and innovative building solutions.
+                    </p>
+                  </div>
+                  <button type="button" class="btn type_btn w-100">More about partnership</button>
+                </div>
+              </div>
+          </div>
+        </div>
+    </section>
+
+    <section class="motive py-5 px-3">
+        <div class="container text-center">
+            <h2 class="title" text-dark mb-3>With us you can bring your construction dreams to life.</h2>
+            <p class="main_text text-dark mb-4">
+                Since our founding, Skyline Builders has been shaping modern cityscapes and exceeding client expectations with innovative solutions. Join us to create sustainable, forward-thinking structures that stand the test of time—and be part of a legacy built on trust and excellence.
+            </p>
+            <button href="" type="button" class="btn type_btn" style="width:60%;">
+                Why Skyline Builders?          
+            </button>
+        </div>
+    </section>
+
+    <section class="result_block py-5 ">   
+        <div class="container">      
+            <div class="row ">
+                <div class="col-md-6 col-sm-12 mb-3">
+                    <ul class="d-flex flex-wrap justify-content-between no-bullets gap-3">
+                        <li class="list-element p-4 flex-fill" style="max-width: 100%; width: 90%; max-width: 550px;">
+                            <h1 class="display-1" style="color: rgb(124, 72, 67);">250+</h1>
+                            <h2><strong>Projects Completed</strong></h2>
+                            <p style="color: grey">From high‑rise towers to bespoke homes, we deliver excellence at every scale. </p>
+                        </li>
+                        <li class="list-element p-4 flex-fill" style="max-width: 100%; width: 90%; max-width: 550px;">
+                            <h1 class="display-1" style="color: rgb(124, 72, 67);">99%</h1>
+                            <h2><strong>Client Satisfaction</strong></h2>
+                            <p style="color: grey">Our clear communication and quality craftsmanship earn top ratings.
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class=" col-md-6 col-sm-12 mb-3">
+                    <ul class="d-flex flex-wrap justify-content-between no-bullets gap-3">
+                        <li class="list-element p-4 flex-fill" style="max-width: 100%; width: 90%; max-width: 550px;">
+                            <h1 class="display-1" style="color: rgb(124, 72, 67);">100%</h1>
+                            <h2><strong>Safety Record</strong></h2>
+                            <p style="color: grey">Zero on‑site incidents thanks to rigorous protocols and training.
+                            </p>
+                        </li>
+                        <li class="list-element p-4 flex-fill" style="max-width: 100%; width: 90%; max-width: 550px;">
+                            <h1 class="display-1" style="color: rgb(124, 72, 67);">30+</h1>
+                            <h2><strong>Years of Expertise</strong></h2>
+                            <p style="color: grey">ADecades of innovative design and construction shaping modern skylines.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="process">
+        <h2  class="text-white">How We Get Things Done?</h2>
+    </section>
+
+    <section class="work py-5">
+        <div class="container">
+          <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+              <h3>Discovery & Feasibility</h3>
+              <p class="main_text">
+                We kick off every project with an in‑depth consultation to capture  vision, budget and site constraints. Our experts perform feasibility studies, site surveys and regulatory reviews to validate every aspect before you commit. You’ll receive a comprehensive report outlining opportunities, challenges and preliminary cost projections.
+              </p>
+              <button  href="" class="btn mb-3" style="width: 50%;">Learn More</button>
+            </div>
+            <div class="col-md-6">
+                <img src="https://thearchitectsdiary.com/wp-content/uploads/2023/02/Arch2O-architectural-sketching-10-architecture-sketching-tips-1-1024x585.jpg"
+                alt="Discovery & Feasibility"
+                class="img-fluid work-img"/>
+            </div>
+          </div>
+    
+          <div class="row align-items-center mb-5">
+            <div class="col-md-6 order-md-2">
+              <h3>Design & Engineering</h3>
+              <p class="main_text">
+                Next, our architects and engineers collaborate to turn ideas into tangible plans: from concept sketches to fully detailed CAD drawings and 3D renders. We hold regular review sessions so you can provide feedback at each stage—fine‑tuning aesthetics, functionality and sustainability goals. Once you’re happy, we pull together all permit applications and secure necessary approvals.
+              </p>
+              <button  href="" class="btn mb-3" style="width: 50%;">Get Started</button>
+            </div>
+            <div class="col-md-6 order-md-1">
+                <img src="https://res.cloudinary.com/liaison-inc/image/upload/c_fit,f_auto,q_auto,w_1200/services/homeguide/backgrounds/architectural-services.jpg"
+                alt="Design & Engineering"
+                class="img-fluid work-img"/>
+            </div>
+          </div>
+    
+          <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+              <h3>Construction & Handover</h3>
+              <p class="main_text">
+                With planning locked in, our skilled construction teams mobilize on‑site, guided by rigorous quality controls and safety protocols. You’ll get real‑time updates and milestone reports so you always know exactly where things stand. When the build is complete, we perform a final walkthrough, hand over all documentation and make sure you’re 100% satisfied before we leave.
+              </p>
+              <button  href="" class="btn mb-3" style="width: 50%;">View Details</button>
+            </div>
+            <div class="col-md-6">
+                <img
+                src="https://thumbs.dreamstime.com/b/two-men-engineer-look-blueprint-architecture-building-contractor-design-modern-city-development-males-holding-project-323591116.jpg"
+                alt="Construction & Handover"
+                class="img-fluid work-img"/>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    
+    <section class="ad py-5 px-3">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <h2 class="mb-0" style="color:  rgb(124, 72, 67);">Are you interested?</h2>
+                <button type="button" class="btn">
+                    Get Started 
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="footer pt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-12 mb-4">
+                  <h3>Overall: </h3>
+                </div>
+           
+                <div class="col-md-3 col-sm-12 mb-4">
+                  <h3>Get Started</h3>
+                  <ul class="no-bullets  main_text">
+                    <li><a href="">Our Services</a></li>
+                    <li><a href="">Careers</a></li>
+                    <li><a href="">Portfolio</a></li>
+                  </ul>
+                </div>
+
+                <div class="col-md-3 col-sm-12 mb-4">
+                  <h3>Skyline Builders</h3>
+                  <ul class="no-bullets  main_text">
+                    <li><a href="">About Us</a></li>
+                    <li><a href="">News & Insights</a></li>
+                    <li><a href="">FAQs</a></li>
+                  </ul>
+                  </ul>
+                </div>
+
+                <div class="col-md-3 col-sm-12 mb-4">
+                  <h3>Contact Us</h3>
+                  <ul class="no-bullets  main_text">
+                    <li>Address: 123 Main Street, New York, NY</li>
+                    <li>Phone: <a href="">(555) 123‑4567</a></li>
+                    <li>Email: <a href="">info@skylinebuilders.com</a></li>
+                  </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer_bottom">
+            Skyline Team
+        </div>
+    </section>
+</body>
+</html>

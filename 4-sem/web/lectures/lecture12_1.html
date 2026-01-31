@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lecture12_1</title>
+</head>
+<body>
+    <label for="numInput">Enter n:</label>
+    <input type="number" id="numInput" min="1" placeholder="enter a number">
+    <button id="runBtn">Run FizzBuzz</button>
+    <div id="result"></div>
+
+    <script>
+        function fizzBuzzDeclaration(n) {
+            let result = [];
+            for (let i = 1; i <= n; i++) {
+                if (i % 3 === 0 && i % 5 === 0) {
+                    result.push("fizzbuzz");
+                } else if (i % 3 === 0) {
+                    result.push("fizz");
+                } else if (i % 5 === 0) {
+                    result.push("buzz");
+                } else {
+                    result.push(i);
+                }
+            }
+            return result;
+        }
+
+        document.getElementById('runBtn').addEventListener('click', () => {
+            const inputEl = document.getElementById('numInput');
+            const n = parseInt(inputEl.value, 10);
+            const resultContainer = document.getElementById('result');
+
+            if (isNaN(n) || n < 1) {
+                resultContainer.textContent = 'Please enter a valid number greater than 0.';
+                return;
+            }
+
+            const output = fizzBuzzDeclaration(n);
+            resultContainer.textContent = output.join(', ');
+        });
+    </script>
+</body>
+</html>

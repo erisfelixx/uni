@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lecture14</title>
+        <style>
+        button { margin-right: 0.5rem; padding: 0.5rem 1rem; font-size: 1rem; }
+        #fieldContainer { margin-top: 1rem; }
+        #fieldContainer input { display: block; margin-bottom: 0.5rem; padding: 0.5rem; width: 300px; }
+    </style>
+</head>
+<body>
+    <button id="addBtn">Додати поле</button>
+    <button id="removeBtn">Видалити поле</button>
+
+    <div id="fieldContainer">
+        <input type="text" placeholder="Поле 1">
+    </div>
+
+    <script>
+        const container = document.getElementById('fieldContainer');
+        const addBtn = document.getElementById('addBtn');
+        const removeBtn = document.getElementById('removeBtn');
+
+        addBtn.addEventListener('click', () => {
+            const newField = document.createElement('input');
+            newField.type = 'text';
+            newField.placeholder = `Поле ${container.children.length + 1}`;
+            container.appendChild(newField);
+        });
+
+        removeBtn.addEventListener('click', () => {
+            if (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+        });
+    </script>
+</body>
+</html>

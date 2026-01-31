@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Інформація про відвідування сторінки</title>
+  <style>
+    body {
+      background: #efefef;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    form {
+      margin-bottom: 10px;
+    }
+    input[type="datetime-local"] {
+      padding: 6px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Інформація про відвідування сторінки</h1>
+    <p id="visitDateTime">Завантаження…</p>
+    <p id="sessionTime">Завантаження…</p>
+    <p id="prevSessionTime">Завантаження…</p>
+
+    <hr>
+
+    <h2>Обчислити, скільки часу минуло з введеної дати</h2>
+    <form id="diffForm">
+      <label for="inputDateTime">Введіть дату і час:</label>
+      <input type="datetime-local" id="inputDateTime">
+      <button type="submit">Обчислити</button>
+    </form>
+    <p id="diffResult"></p>
+  </div>
+
+  <script>
+    let sessionStart = Date.now();
+    let sessionSeconds = 0;
+    const sessionEl = document.getElementById('sessionTime');
+    sessionEl.textContent = 'Час, проведений на сайті: 0 секунд';
+
+    const timer = setInterval(() => {
+      sessionSeconds++;
+      sessionEl.textContent = `Час, проведений на сайті: ${sessionSeconds} секунд`;
+    }, 1000);
+
+    //поточний візит
+    function displayVisitInfo() {
+      const now = new Date();
+      const days = ['Неділя','Понеділок','Вівторок','Середа','Четвер',"Пʼятниця",'Субота'];
+      const weekday = days[now.getDay()].toLowerCase();
+      const dateStr = now.toLocaleDateString('uk-UA', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const timeStr = now.toLocaleTimeString('uk-UA', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      document.getElementById('visitDateTime').textContent =
+        `Дата і час відвідування: ${weekday}, ${dateStr} р. о ${timeStr}`;
+    }
+
+    //попередній сеанс
+    function displayPrevSession() {
+      const prev = localStorage.getItem('lastSessionDuration');
+      const el = document.getElementById('prevSessionTime');
+      if (prev !== null) {
+        el.textContent =
+          `Час попереднього відвідування: ${parseInt(prev, 10)} секунд`;
+      } else {
+        el.textContent = 'Час попереднього відвідування: 0 секунд';
+      }
+    }
+
+    //різниця дат
+    document.getElementById('diffForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const input = document.getElementById('inputDateTime').value;
+      const resultEl = document.getElementById('diffResult');
+      if (!input) {
+        resultEl.textContent = '';
+        return;
+      }
+      const selected = new Date(input);
+      const now = new Date();
+      let diffMs = now - selected;
+      const past = diffMs >= 0;
+      diffMs = Math.abs(diffMs);
+
+      const sec = Math.floor(diffMs / 1000) % 60;
+      const min = Math.floor(diffMs / (1000 * 60)) % 60;
+      const hr  = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
+      const daysCount = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      resultEl.textContent = past
+        ? `Минуло: ${daysCount} дн., ${hr} год., ${min} хв., ${sec} сек.`
+        : `Залишилось: ${daysCount} дн., ${hr} год., ${min} хв., ${sec} сек.`;
+    });
+
+    window.addEventListener('beforeunload', () => {
+      clearInterval(timer);
+      localStorage.setItem('lastSessionDuration', sessionSeconds);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      displayVisitInfo();
+      displayPrevSession();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!--для icons-->
+    <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <title>lecture11_2</title>
+    <style>
+        .table-hover tbody tr:hover,
+        .table-hover tbody tr:hover td,
+        .table-hover tbody tr:hover th {
+            background-color: #b6edab !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-4">
+        <form class="form">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="filterInput" class="form-label">Filter</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="filterInput" placeholder="Type to Search">
+                        <button class="btn btn-outline-secondary" type="button">Clear</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="sortSelect" class="form-label">Sort</label>
+                      <div class="input-group">
+                        <select class="form-select" id="sortSelect">
+                          <option selected>-- none --</option>
+                        </select>
+                        <select class="form-select" disabled>
+                          <option selected>Asc</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="sortDirection" class="form-label">Sort direction</label>
+                      <div class="input-group">
+                        <select class="form-select" id="sortDirection">
+                          <option selected>Asc</option>
+                          <option>Desc</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="perPage" class="form-label">Per page</label>
+                      <div class="input-group">
+                        <select class="form-select" id="perPage">
+                          <option>5</option>
+                          <option>10</option>
+                          <option>15</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </form>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                  <th scope="col">Person Full name <i class="bi bi-arrow-down-up"></i></th>
+                  <th scope="col">Person age <i class="bi bi-arrow-down-up"></i></th>
+                  <th scope="col">is Active</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <td>Dickerson Macdonald</td>
+                    <td>40</td>
+                    <td>Yes:)</td>
+                    <td>
+                      <button type="button" class="btn btn-secondary">Info modal</button>
+                      <button type="button" class="btn btn-secondary">Show details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Larsen Shaw</td>
+                    <td>21</td>
+                    <td>No:(</td>
+                    <td>
+                      <button type="button" class="btn btn-secondary">Info modal</button>
+                      <button type="button" class="btn btn-secondary">Show details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Mini Navarro</td>
+                    <td>9</td>
+                    <td>No:(</td>
+                    <td>
+                      <button type="button" class="btn btn-secondary">Info modal</button>
+                      <button type="button" class="btn btn-secondary">Show details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Geneva Wilson</td>
+                    <td>89</td>
+                    <td>No:(</td>
+                    <td>
+                      <button type="button" class="btn btn-secondary">Info modal</button>
+                      <button type="button" class="btn btn-secondary">Show details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Jami Carney</td>
+                    <td>38</td>
+                    <td>Yes:)</td>
+                    <td>
+                      <button type="button" class="btn btn-secondary">Info modal</button>
+                      <button type="button" class="btn btn-secondary">Show details</button>
+                    </td>
+                  </tr>
+              </tbody>
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&lsaquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&rsaquo;</span>
+                  <span class="sr-only"></span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only"></span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+    </div>
+</body>
+</html>

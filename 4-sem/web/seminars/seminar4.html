@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animals</title>
+    <style>
+    body {
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        background-color: whitesmoke;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        position: relative;
+    }
+    .main_block {
+        display: flex;
+        flex-flow: row;
+        width: 40%;
+        padding: 40px 20px 40px 20px;
+    }
+    .left_block {
+        background-image: url(seminar4_ph/fon_l.jpg);
+        background-size: cover;
+        position: absolute;
+        top: 4%;
+        left: 4%;
+
+    }
+    .right_block {
+        background-image: url(seminar4_ph/fon_r.jpg);
+        background-size: cover;
+        position: absolute;
+        top: 4%;
+        right: 4%;
+    }
+    .central_block {
+        background-image: url(seminar4_ph/fon_c.jpg);
+        background-size: cover;
+        position: absolute;
+        z-index: 2;
+        top: 35%;
+        right: 25%;
+    }
+    .content {
+        width: 60%;
+    }
+    .content_right {
+        width: 40%;
+    }
+
+    .main_image {
+        width: 95%;
+        position: relative;
+        vertical-align: top;
+        border: 5px solid whitesmoke;
+    }
+    .description {
+        color: whitesmoke;
+		text-align: center;
+        word-break: break-word;
+        font-weight: bold;
+        padding-top: 5px;
+    }
+    .window {
+        display: inline-block;
+		width: 95%;
+        background-color: whitesmoke;
+        padding: 5px;
+        margin-top: 20px;
+    }
+    .menu {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        margin-top: 5px;
+        border-radius: 5px;
+        gap: 5px;
+    }
+    .option {
+        display: inline-flex;
+        text-align: center;
+        border: 1px solid rgb(115, 115, 115);
+        border-radius: 3px 3px 0px 0px;
+        padding: 5px;
+
+    }
+    .option.option_active {
+        color:deeppink;
+    }
+    .option:hover {
+        color: rgb(29, 127, 197);
+    }
+    .menu.central {
+        background-image: linear-gradient(to bottom, rgb(74, 113, 179), rgb(83, 123, 192), rgb(96, 136, 204), rgb(111, 152, 223), rgb(121, 163, 235));
+    }
+    .menu.central .option {
+        background-image: linear-gradient(to bottom, rgb(9, 103, 171), rgb(29, 127, 197), rgb(51, 151, 222),);
+        color: white;
+    }
+    .menu.central .option.option_active {
+        background-image: linear-gradient(to bottom, rgb(36, 171, 36), rgb(83, 205, 83), rgb(107, 224, 107));
+    }
+    .menu.central .option:hover {
+        background-image: linear-gradient(to bottom, rgb(216, 216, 20), rgb(252, 252, 97), rgb(243, 243, 157));
+    }
+
+    .window_image {
+        max-width: 50%;
+        border: 5px solid darkgray;
+        float: left;
+        margin: 0px 5px 5px 0;
+    }
+    .article {
+        padding: 10px;
+    }
+    p {
+        color: rgb(29, 127, 197);
+        font-weight: bold;
+    }
+
+    .col_double {
+        display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 5px;
+        padding: 10px;    
+    }
+    .col_double img {
+        width: 95%;
+        height: 60%;
+        border: 3px solid darkgray;
+    }
+    .col_text {
+        text-align: center;
+        color: whitesmoke;
+    }
+    
+    .col_single {
+        display: grid;
+		grid-template-columns: 1fr;
+    }
+    .col_single img {
+        width: 70%;
+        height: 40%;
+        border: 3px solid darkgray;
+    }
+
+
+</style>
+</head>
+
+<body>
+ <div class="main_block left_block">
+    <div class="content">
+        <img src="seminar4_ph/fox.jpg" class="main_image" alt="fox">
+        <div class="description">Curious fox in a lush meadow</div>
+        <div class="window">
+            <div class="menu">
+                <div class="option option_active">About foxes</div>
+				<div class="option">Main features</div>
+				<div class="option">Detailed info</div>
+            </div>
+            <div class="article">
+                <img class="window_image" src="seminar4_ph/hug_cats.jpg"/>
+                Foxes are small, clever animals that belong to the Canidae family, which also includes dogs, wolves, and coyotes. They are known for their bushy tails and pointed ears. Foxes can be found in many parts of the world, including forests, grasslands, and even cities.
+                <p><a href="https://www.wikipedia.com.ua/">Visit website to learn more!</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content_right col_double">
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">6:00 am</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/bee.jpg"/>
+            <div class="col_text">8:00 am</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dog.jpg"/>
+            <div class="col_text">10:00 am</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">12:00 pm</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/snake.jpg"/>
+            <div class="col_text">2:00 pm</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">4:00 pm</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">6:00 pm</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">8:00 pm</div>
+        </div>
+    </div>
+ </div>
+
+ <div class="main_block right_block">
+    <div class="content">
+        <img src="seminar4_ph/frog.jpg" class="main_image" alt="frog">
+        <div class="description">Cute frog is looking on the butterfly</div>
+        <div class="window">
+            <div class="menu">
+                <div class="option option_active">About frogs</div>
+				<div class="option">Main features</div>
+				<div class="option">Detailed info</div>
+            </div>
+            <div class="article">
+                <img class="window_image" src="seminar4_ph/hug_cats.jpg"/>
+                Frogs are amphibians, which means they can live both in water and on land. They start their life as tadpoles and later transform into adult frogs. Frogs have smooth, slippery skin.
+                <p><a href="https://www.wikipedia.com.ua/">Visit website to learn more!</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="content_right col_single">
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">6:00 am</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/bee.jpg"/>
+            <div class="col_text">8:00 am</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dog.jpg"/>
+            <div class="col_text">10:00 am</div>
+        </div>
+        <div>
+            <img src="seminar4_ph/dino.jpg"/>
+            <div class="col_text">12:00 pm</div>
+        </div>
+    </div>
+ </div>
+
+ <div class="main_block central_block">
+    <div class="content">
+        <img src="seminar4_ph/duck.jpg" class="main_image" alt="duck">
+        <div class="window">
+            <div class="menu central">
+                <div class="option option_active">About ducks</div>
+				<div class="option">Main features</div>
+				<div class="option">Detailed info</div>
+            </div>
+            <div class="article">
+                <img class="window_image" src="seminar4_ph/hug_cats.jpg"/>
+                Ducks are waterfowl that are commonly found in lakes, rivers, and ponds. They have webbed feet, which help them swim, and a flat beak that they use to filter food from the water. 
+                <p><a href="https://www.wikipedia.com.ua/">Visit website to learn more!</a></p>
+            </div>
+        </div>
+    </div>
+ </div>
+</body>
+</html>

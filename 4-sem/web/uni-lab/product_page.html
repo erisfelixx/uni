@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product(page2)</title>
+    <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+  <style>
+     @font-face {
+      font-family: 'Playfair Display';
+      src: url('fonts/playfairdisplay-regular.woff2') format('woff2'),
+           url('fonts/playfairdisplay-regular.woff') format('woff'),
+           url('fonts/playfairdisplay-regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --primary: #9d7e7e;
+      --primary-dark: #7c5c5c;
+      --secondary: #f8e9e5;
+      --light: #fcf7f6;
+      --dark: #3c2a2a;
+      --accent: #d4a7a7;
+      --text: #3c2a2a;
+      --text-light: #7c6464;
+      --white: white;
+      --border: #e8d5d0;
+    }   
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      line-height: 22px;
+      color: var(--text);
+      background-color: var(--light);
+      display: flex;
+      flex-direction: column;
+    }
+    .page-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;         
+    }
+    .page-content > *:first-child {
+      margin-top: 0 !important;
+    }
+    .page-content > *:last-child {
+      margin-bottom: 0 !important;
+    }
+    .header > .container,
+    .navbar > .container,
+    .site-footer > .container {
+      max-width: 980px;
+      padding: 0 10px;
+      margin: 0 auto;
+    }
+    .header {
+      padding: 20px 0;
+      background-color: var(--secondary);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+
+    }
+    .logo img {
+      margin-right: 15px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .company-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .company-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--dark);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+    }
+    .company-slogan {
+      color: var(--text-light);
+      padding: 15px;
+      font-weight: 500;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .phone {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .feedback-link a {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .feedback-link a:hover {
+      color: var(--primary-dark);
+    }
+
+    .navbar {
+      background-color: var(--primary) !important;
+      padding: 0;
+    }
+    .navbar-nav .nav-link {
+      padding: 15px 20px !important;
+      font-weight: 500;
+    }
+    .navbar-nav .nav-link:hover {
+      background-color: var(--primary-dark);
+    }
+    main h5 {
+      text-align: center;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .breadcrumb {
+      margin-bottom: 20px;
+    }
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+
+    #leftblock {
+      background-color: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      padding-bottom: 10px;
+      align-self: flex-start;
+    }
+    #leftblock a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    #leftblock a:hover {
+      color: var(--primary);
+    }
+    #leftblock ul {
+      list-style: none;
+    }
+    #centerblock h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      text-align: center;
+      position: relative;
+    }
+    #centerblock { 
+      position: relative; 
+    }
+    #centerblock h2:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background-color: var(--primary);
+    }
+
+    .site-footer {
+      background-color: var(--dark);
+      padding: 40px 0 !important;
+      color: var(--primary);
+    }
+
+    .footer-menu .nav-link {
+      padding: 0 15px 0 0 !important;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .footer-menu .nav-link:hover {
+      opacity: 1;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-control {
+      border-radius: 5px;
+      padding: 10px 15px;
+      border-color: var(--border);
+    }
+    .form-control:focus {
+      box-shadow: none;
+      border-color: var(--primary);
+    }
+    .is-invalid { 
+      border-color: darkred !important; 
+    }
+
+
+    /*для сторінки продукту*/
+    .product-gallery {
+      background-color: var(--white);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+    .product-main-image {
+      text-align: center;
+      margin-bottom: 20px;
+      overflow: hidden;
+      max-height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .product-main-image img {
+      max-width: 100%;
+      max-height: 380px;
+      object-fit: contain;
+      border-radius: 5px;
+      transition: transform 0.3s;
+    }
+    .product-thumbnails {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .thumbnail {
+      width: 80px;
+      height: 80px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      padding: 3px;
+      overflow: hidden;
+      background-color: var(--light);
+    }
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 3px;
+    }
+    .thumbnail:hover img {
+      transform: scale(1.2);
+      transition: transform 0.3s ease;
+    }
+    .thumbnail.active {
+      border-color: var(--primary);
+    }
+    .product-info {
+      background-color: var(--white);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    }
+    .product-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      margin-bottom: 15px;
+      color: var(--dark);
+      font-weight: 600;
+    }
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+    }
+    .quantity-btn {
+      width: 40px;
+      height: 40px;
+      background-color: var(--light);
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      transition: background-color 0.3s;
+      border-radius: 5px;
+    }
+    .quantity-btn:hover {
+      background-color: var(--secondary);
+    }
+    .quantity-input {
+      width: 60px;
+      height: 40px;
+      text-align: center;
+      border: 1px solid var(--border);
+      margin: 0 10px;
+      font-weight: 500;
+      border-radius: 5px;
+    }
+    .wishlist-btn:hover {
+      background-color: var(--accent);
+      color: var(--white);
+    }
+    .product-tabs {
+      margin-top: 40px;
+      background-color: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    
+    .nav-tabs {
+      border-bottom: 1px solid var(--border);
+      background-color: var(--light);
+    }
+    .nav-tabs .nav-link {
+      border: none;
+      font-weight: 500;
+      color: var(--text);
+      padding: 15px 25px;
+      border-radius: 0;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-tabs .nav-link.active {
+      background-color: var(--white);
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+  </style>
+</head>
+
+<body>
+ <div class="page-content">
+  <!--header-->
+  <header class="header">
+    <div class="container d-flex align-items-center justify-content-between py-2">
+      <div class="d-flex align-items-center">
+        <div class="logo">
+          <img src="https://as1.ftcdn.net/v2/jpg/09/66/07/88/1000_F_966078808_gJusa3tjrgsfmw0030syeX6c8leARMq8.jpg" 
+          alt="Логотип компанії"
+          width="100"
+          height="100">
+        </div>
+        <div class="company-info text-start">
+          <div class="company-name">Auralite</div>
+          <div class="company-slogan">Quality You Can See</div>
+        </div>
+      </div>
+      <div class="header-contacts text-end">
+        <div class="phone"><i class="bi bi-phone me-2"></i>+38(050) 123-45-67</div>
+        <div class="phone"><i class="bi bi-phone me-2"></i>+38(099) 123-45-67</div>
+        <div class="feedback-link"><a class="nav-link" href="#" id="feedbackLink"><i class="bi bi-chat-left-text me-1"></i>Зворотний зв'язок</a></div>
+      </div>
+    </div>
+  </header>
+  
+  <!--main menu -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <!-- кнопка «гамбургер» для мобільних -->
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#mainMenu"
+              aria-controls="mainMenu"
+              aria-expanded="false"
+              aria-label="Переключити навігацію">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-center" id="mainMenu">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="index.html">Головна</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="catalog.html">Каталог</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="#">Доставка та оплата</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="#">Відгуки</a></li>
+          <li class="nav-item px-3"><a class="nav-link fs-6 text-white" href="#">Кошик</a></li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <a href="#" class="text-white me-3" aria-label="Пошук">
+            <i class="bi bi-search fs-5"></i>
+          </a>
+          <a href="#" class="text-white me-3" aria-label="Кошик">
+            <i class="bi bi-bag fs-5"></i>
+          </a>
+          <a href="#" class="text-white" aria-label="Профіль">
+            <i class="bi bi-person fs-5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!--content-->
+  <main class="container my-4" id="content">
+    <div class="row">
+      <aside class="col-12 col-lg-3 mb-4" id="leftblock">
+        <div class="p-3">
+          <h5 class="mb-3">Меню категорій</h5>
+          <ul class="list-unstyled mb-0">
+            <li><a href="#"><i class="bi bi-palette me-2"></i>Макіяж</a></li>
+            <ul>
+              <li><a href="#">Обличчя</a></li>
+              <li><a href="#">Очі</a></li>
+              <li><a href="#">Губи</a></li>
+            </ul>
+            <li><a href="#"><i class="bi bi-droplet me-2"></i>Догляд за шкірою</a></li>
+            <ul>
+              <li><a href="#">Очищення</a></li>
+              <li><a href="#">Тонізування</a></li>
+              <li><a href="#">Зволоження</a></li>
+              <li><a href="#">Засоби для проблемної шкіри</a></li>
+              <li><a href="#">Сонцезахист</a></li>
+            </ul>    
+            <li><a href="#"><i class="bi bi-brush me-2"></i>Догляд за волоссям</a></li>
+            <ul>
+              <li><a href="#">Шампуні та кондиціонери</a></li>
+              <li><a href="#">Маски та олії</a></li>
+              <li><a href="#">Стайлінг</a></li>
+              <li><a href="#">Фарби для волосся</a></li>
+            </ul> 
+            <li><a href="#"><i class="bi bi-moisture me-2"></i>Догляд за тілом</a></li>
+            <ul>
+              <li><a href="#">Гелі для душу та мило</a></li>
+              <li><a href="#">Лосьйони та масла</a></li>
+              <li><a href="#">Скраби та пілінги</a></li>
+            </ul> 
+            <li><a href="#"><i class="bi bi-stars me-2"></i>Парфумерія</a></li>
+            <ul>
+              <li><a href="#">Жіночі парфуми</a></li>
+              <li><a href="#">Чоловічі парфуми</a></li>
+              <li><a href="#">Унісекс</a></li>
+            </ul>    
+            <li><a href="#"><i class="bi bi-flower1 me-2"></i>Органічна косметика</a></li>
+            <li><a href="#"><i class="bi bi-tools me-2"></i>Інструменти та аксесуари</a></li>
+            <li><a href="#"><i class="bi bi-gift me-2"></i>Набори та подарунки</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="col-12 col-lg-9" id="centerblock">
+        <nav class="breadcrumb">
+          <a href="index.html">Головна</a> <span>/</span>
+          <a href="catalog.html">Каталог</a> <span>/</span>
+          <a href="#">Догляд за шкірою</a> <span>/</span>
+          SKIN1004 Madagascar Centella Poremizing Fresh Ampoule
+        </nav>
+        <div class="product-detail-container">
+          <div class="row">
+            <!--картинки-->
+            <div class="col-md-6 mb-4">
+              <div class="product-gallery p-3 rounded shadow-sm">
+                <div class="main-image mb-3">
+                  <img src="https://thekshop.ca/cdn/shop/products/SKIN1004MadagascarCentellaPoremizingFreshAmpoule.jpg?v=1659488673" 
+                       class="img-fluid rounded" 
+                       id="mainProductImage" 
+                       alt="SKIN1004 Poremizing Fresh Ampoule">
+                </div>
+
+                <div class="image-thumbnails d-flex justify-content-start">
+                  <div class="thumbnail me-2 border rounded p-1" data-image="https://static.ksisters.com/public/skus/l/219e890dbed368f9071fc2baf95d5a31_dozy54vb_e9e899e0e3d2f0.webp">
+                    <img src="https://static.ksisters.com/public/skus/l/219e890dbed368f9071fc2baf95d5a31_dozy54vb_e9e899e0e3d2f0.webp" class="img-fluid" alt="Thumbnail 1">
+                  </div>
+                  <div class="thumbnail me-2 border rounded p-1" data-image="https://www.kylkalyaba.com.ua/cache/cache_image/9/9a6951e292dcfa90d8353b5427a41288">
+                    <img src="https://www.kylkalyaba.com.ua/cache/cache_image/9/9a6951e292dcfa90d8353b5427a41288" class="img-fluid" alt="Thumbnail 2">
+                  </div>
+                  <div class="thumbnail me-2 border rounded p-1" data-image="https://static.ksisters.com/public/skus/l/1ebcf68d23af555225d037cb4ee46e01_63hfnxqh_d3e59be29dc8ea.webp">
+                    <img src="https://static.ksisters.com/public/skus/l/1ebcf68d23af555225d037cb4ee46e01_63hfnxqh_d3e59be29dc8ea.webp" class="img-fluid" alt="Thumbnail 3">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!--опис товару-->
+            <div class="col-md-6">
+              <div class="product-info">
+                <h2 class="mb-3">SKIN1004 Madagascar Centella Poremizing Fresh Ampoule</h2>
+                <div class="product-meta d-flex align-items-center mb-3">
+                  <div class="product-rating me-3">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <i class="bi bi-star-half text-warning"></i>
+                    <span class="ms-1">(32)</span>
+                  </div>
+                  <div class="product-availability text-success">
+                    <i class="bi bi-check-circle-fill me-1"></i>В наявності
+                  </div>
+                </div>
+                
+                <div class="product-price mb-3">
+                  <span class="fs-3 fw-bold" style="color: var(--primary-dark);">549 грн</span>
+                  <span class="text-decoration-line-through ms-2 text-muted">649 грн</span>
+                </div>
+                
+                <div class="product-description mb-4">
+                  <p>Ампула для вузьких пор на основі центелли азіатської. Формула зволожує шкіру, звужує пори та надає матовий ефект. Допомагає контролювати надлишок себума та підтримувати здоровий баланс шкіри.</p>
+                  <ul class="mb-3">
+                    <li>Об'єм: 100 мл</li>
+                    <li>Звужує пори та контролює виділення шкірного жиру</li>
+                    <li>Заспокоює чутливу шкіру</li>
+                    <li>Підходить для жирної та комбінованої шкіри</li>
+                  </ul>
+                </div>
+                
+                <div class="product-variants mb-4">
+                  <label class="d-block mb-2 fw-bold">Об'єм:</label>
+                  <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="volume" id="volume30" autocomplete="off">
+                    <label class="btn btn-outline-secondary" for="volume30">30 мл</label>
+                    
+                    <input type="radio" class="btn-check" name="volume" id="volume50" autocomplete="off">
+                    <label class="btn btn-outline-secondary" for="volume50">50 мл</label>
+                    
+                    <input type="radio" class="btn-check" name="volume" id="volume100" autocomplete="off" checked>
+                    <label class="btn btn-outline-secondary" for="volume100">100 мл</label>
+                  </div>
+                </div>
+
+                <div class="product-actions d-flex flex-wrap mb-4">
+                  <div class="quantity-selector d-flex align-items-center me-3 mb-2">
+                    <button class="btn btn-outline-secondary px-3" onclick="decrementQuantity()">-</button>
+                    <input type="number" id="quantity" class="form-control text-center mx-2" value="1" min="1" style="width: 60px;">
+                    <button class="btn btn-outline-secondary px-3" onclick="incrementQuantity()">+</button>
+                  </div>
+                  <button class="btn mb-2 me-2" style="background-color: var(--primary); color: white;">
+                    <i class="bi bi-bag-plus me-2"></i>Додати в кошик
+                  </button>
+                  
+                  <button class="btn btn-outline-secondary mb-2">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                </div>  
+            </div>
+          </div>
+        </div>
+      <!--детальна інформація-->
+        <div class="product-tabs mt-5">
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">
+                  Опис
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ingredients-tab" data-bs-toggle="tab" data-bs-target="#ingredients" type="button" role="tab">
+                  Склад
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="usage-tab" data-bs-toggle="tab" data-bs-target="#usage" type="button" role="tab">
+                  Спосіб застосування
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                  Відгуки (32)
+                </button>
+              </li>
+            </ul>
+            
+            <div class="tab-content p-4 bg-white rounded-bottom shadow-sm" id="productTabsContent">
+              <div class="tab-pane fade show active" id="description" role="tabpanel">
+                <p>SKIN1004 Madagascar Centella Poremizing Fresh Ampoule — це ампула з сироваткою, яка призначена для проблемної шкіри з розширеними порами. Формула на 84% складається з екстракту центелли азіатської з Мадагаскару, відомої своїми заспокійливими властивостями.</p>
+                
+                <p>Основні переваги:</p>
+                <ul>
+                  <li>Звужує пори, усуває надлишкову жирність</li>
+                  <li>Регулює вироблення шкірного сала</li>
+                  <li>Заспокоює запалення та почервоніння</li>
+                  <li>Зміцнює захисний бар'єр шкіри</li>
+                  <li>Надає матовий фініш</li>
+                  <li>Легка текстура швидко вбирається, не залишає липкості</li>
+                </ul>
+                
+                <p>Ампула має легку гелеву текстуру, яка швидко вбирається, не залишаючи жирного блиску. Рекомендується для комбінованої, жирної та проблемної шкіри з розширеними порами.</p>
+              </div>
+              
+              <div class="tab-pane fade" id="ingredients" role="tabpanel">
+                <p><strong>Склад:</strong> Centella Asiatica Extract (84%), Water, Glycereth-26, Niacinamide, 1,2-Hexanediol, Hydroxyacetophenone, Adenosine, Glycerin, Propanediol, Glyceryl Acrylate/Acrylic Acid Copolymer, Carbomer, Tromethamine, Panthenol, Allantoin, Hydroxyethylcellulose, Butylene Glycol, Pentylene Glycol, Dipotassium Glycyrrhizate, Cetearyl Olivate, Ethylhexylglycerin, Disodium EDTA, Sorbitan Olivate, Asiaticoside, Asiatic Acid, Madecassic Acid, Madecassoside.</p>
+                
+                <p><strong>Ключові інгредієнти:</strong></p>
+                <ul>
+                  <li><strong>Екстракт центелли азіатської (84%)</strong> - заспокоює запалення, стимулює вироблення колагену</li>
+                  <li><strong>Ніацинамід</strong> - зменшує пори, вирівнює тон шкіри, зміцнює бар'єрну функцію</li>
+                  <li><strong>Пантенол</strong> - заспокоює та зволожує шкіру</li>
+                  <li><strong>Алантоїн</strong> - заспокоює подразнення та запалення</li>
+                  <li><strong>Аденозин</strong> - має антивікові властивості, покращує еластичність шкіри</li>
+                </ul>
+                
+                <p>Продукт не містить штучних ароматизаторів, спирту та парабенів.</p>
+              </div>
+              
+              <div class="tab-pane fade" id="usage" role="tabpanel">
+                <p><strong>Як використовувати:</strong></p>
+                <ol>
+                  <li>Після очищення та тонізування шкіри нанесіть декілька крапель ампули на обличчя.</li>
+                  <li>Легкими рухами розподіліть засіб по всьому обличчю, приділяючи особливу увагу зонам з розширеними порами (Т-зона).</li>
+                  <li>Дайте засобу повністю вбратися.</li>
+                  <li>Завершіть зволожуючим кремом.</li>
+                </ol>
+                
+                <p><strong>Рекомендації:</strong></p>
+                <ul>
+                  <li>Використовуйте вранці та ввечері для найкращих результатів.</li>
+                  <li>Можна використовувати як точковий засіб для проблемних зон.</li>
+                  <li>Ідеально підходить для використання перед нанесенням макіяжу, оскільки допомагає контролювати жирність шкіри протягом дня.</li>
+                  <li>Для досягнення максимального ефекту рекомендується використовувати в комплексі з іншими продуктами лінійки SKIN1004 Madagascar Centella Poremizing.</li>
+                </ul>
+              </div>
+            </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- feedback Modal -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-3" id="feedback">
+        <h5 class="modal-title">Зворотний зв'язок</h5>
+        <form id="feedbackForm">
+          <div class="mb-2">
+            <label>Ваше ім'я *</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Телефон *</label>
+            <input type="text" name="phone" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Email *</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Повідомлення</label>
+            <textarea name="message" rows="4" class="form-control"></textarea>
+          </div>
+          <button type="submit" class="btn">Надіслати</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--footer-->
+  <footer class="site-footer py-4">
+    <div class="container">
+      <div class="row mb-4">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <nav class="footer-menu">
+            <ul class="nav">
+              <li class="nav-item"><a class="nav-link text-white" href="index.html">Головна</a></li>
+              <li class="nav-item"><a class="nav-link text-white" href="catalog.html">Каталог</a></li>
+              <li class="nav-item"><a class="nav-link text-white" href="#">Контакти</a></li>
+              <li class="nav-item"><a class="nav-link text-white" href="#">Q&A</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="col-md-6">
+          <div class="newsletter-container">
+            <p class="mb-3 fs-5">Отримуйте інформацію про нові товари та спеціальні пропозиції</p>
+            <div class="d-flex">
+              <input type="email" class="form-control me-2" placeholder="Ваш email" style="border-radius: 5px 0 0 5px; border: none;">
+              <button class="btn" style="border-radius: 0 5px 5px 0;">Підписатися</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="border-secondary my-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>© 2025 Auralite</div>
+        <div>
+          <a href="#" class="text-white text-decoration-none me-3">Політика конфіденційності</a>
+          <a href="#" class="text-white text-decoration-none">Умови використання</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    $(function() {
+    var phoneRegex = /^[0-9\+\-\s\(\)]+$/;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    //реакція в реальному часі
+    $('input[name="phone"]').on('input blur', function() {
+      var $el = $(this);
+      if (phoneRegex.test($el.val())) {
+        $el.removeClass('is-invalid');
+      } else {
+        $el.addClass('is-invalid');
+      }
+    });
+    $('input[name="email"]').on('input blur', function() {
+      var $el = $(this);
+      if (emailRegex.test($el.val())) {
+        $el.removeClass('is-invalid');
+      } else {
+        $el.addClass('is-invalid');
+      }
+    });
+    // показ модалки
+    $('#feedbackLink').on('click', function(e) {
+      e.preventDefault();
+      $('#feedbackModal').modal('show');
+    });
+
+    // 3) під час submit - повна валідація
+    $('#feedbackForm').on('submit', function(e) {
+      var valid = true;
+      var $form = $(this);
+      var $phone = $form.find('input[name="phone"]');
+      var $email = $form.find('input[name="email"]');
+
+      //перевірка телефону+email
+      if (!phoneRegex.test($phone.val())) {
+        $phone.addClass('is-invalid');
+        valid = false;
+      }
+      if (!emailRegex.test($email.val())) {
+        $email.addClass('is-invalid');
+        valid = false;
+      }
+      //перевірка всіх requiredполів
+      $form.find('input[required]').each(function() {
+        var $f = $(this);
+        if (!$f.val()) {
+          $f.addClass('is-invalid');
+          valid = false;
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault();
+      }
+    });
+  });
+
+document.addEventListener('DOMContentLoaded', function() {
+  const mainImg = document.getElementById('mainProductImage');
+  document.querySelectorAll('.thumbnail').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      // змінюємо src головного зображення
+      mainImg.src = thumb.dataset.image;
+      // підсвічуємо активну thumbnail
+      document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    });
+  });
+});
+
+//функції для керування кількістю товару
+function incrementQuantity() {
+  const quantityInput = document.getElementById('quantity');
+  let currentValue = parseInt(quantityInput.value);
+  quantityInput.value = currentValue + 1;
+}
+function decrementQuantity() {
+  const quantityInput = document.getElementById('quantity');
+  let currentValue = parseInt(quantityInput.value);
+  if (currentValue > 1) {
+    quantityInput.value = currentValue - 1;
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const firstThumbnail = document.querySelector('.thumbnail');
+  if (firstThumbnail) {
+    firstThumbnail.classList.add('active');
+  }
+
+  
+  //обробники подій для вкладок
+  const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+      const targetId = this.getAttribute('data-bs-target').substring(1);
+      document.getElementById(targetId).classList.add('show', 'active');
+    });
+  });
+});
+  </script>
+</body>
+</html>

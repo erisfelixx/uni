@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: whitesmoke;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+        #content {
+            position: relative;
+            width: 40%;
+            height: 100%;
+            left: 30%;
+            top: 0;
+            background-color: rgb(255, 206, 185);
+        }
+        header {
+            background-color: black;
+            width: 100%;
+            height: 28px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+        }
+        .top {
+            position: absolute;
+            background-color: #f65454;
+            opacity: 0.8;
+            width: 100%;
+            height: 135px;
+            top: 28px;
+            clip-path: polygon(0% 0%, 0% 100%, 100% 50%, 100% 0%);
+        }
+        .bottom {
+            position: absolute;
+            background-color: #f65454;
+            opacity: 0.8;
+            width: 100%;
+            height: 135px;
+            bottom: 0;
+            left: 0;
+            clip-path: polygon(0% 100%, 0% 50%, 100% 0%, 100% 100%);
+
+        }
+
+        .main_block {
+            position: absolute;
+            width: 70%;
+            height: calc(100% - 28px);
+            left: 30%;
+            top: 28px; 
+            box-sizing: border-box;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .upper_text {
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .main_image {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+            
+        }
+        .main_image img {
+            width: 60%;
+            height: auto;
+            object-fit: cover; 
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 10px;
+            margin-left: 20px;
+        }
+
+
+
+        .left_block {
+            position: absolute;
+            width: 30%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-color: rgba(207, 39, 39, 0.5);
+            box-sizing: border-box;
+            padding-top: 40px;
+        }
+        .column_img {
+            display: grid;
+		    grid-template-columns: 1fr;
+            justify-items: center;
+            padding-left: 20px;
+            gap: 50px;
+        }
+        .column_img img {
+            width: 80%;  
+            height: auto; 
+            object-fit: cover; 
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        
+
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <header></header>
+        <div class="top"></div>
+        <div class="bottom"></div>
+        <div class="left_block">
+            <div class="column_img">
+                <img src="https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/image_1290x726/dam/pnr/porsche_newsroom/Technik/Boxermotoren/b2-P15_0678_a4_rgb.jpg/jcr:content/b2-P15_0678_a4_rgb.jpg"/>
+                <img src="https://f1rst-motors.s3.me-central-1.amazonaws.com/cars/1726925251424-Porsche-history-20.jpg"/>
+                <img src="https://investory.news/wp-content/uploads/2021/01/Ferdinand-Porsche.jpg"/>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKCrg-JBbgv0IK0a4FjQx1F1-ZLt0_4xs30Q&s"/>
+                <img src="https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/image_1290x726/dam/US-local/Porsche-Historical-Background--1948-2007/2018-pcna-history.jpeg/jcr:content/2018-pcna-history.jpeg"/>
+            </div>
+        </div>
+
+        <div class="main_block">
+            <div class="upper_text">
+                <p>The sports car brand Porsche is literally a big noise in the automotive world. The typical sound of its high-performance engines embodies the ultimate in power and dynamics. The make takes its name from world-famous designer Ferdinand Porsche. With sports car models such as the 356 and 911, and race cars such as the 550 Spyder and the 917, the Porsche family business has created automotive icons of pure passion.</p>
+            </div>
+            <div class="main_image">
+                <img src="https://gld-creative.s3.us-west-2.amazonaws.com/2025-porsche-911-turbo-cabriolet-exterior-in-guards-red---feature-image-b24a160214cd-995x476.jpg"/>
+            </div>
+            <div class="grid-container">
+                <div>
+                    <h3>History</h3>
+                    <p>It marked the convergence of two companies which had had many points of contact throughout their history. Ferdinand Porsche (1875-1951) was an innovator whose ground-breaking designs made him one of the great figures in the automotive history of the first half of the 20th century. He began looking into the construction of electric vehicles as early as 1898.</p>
+                    <p>The Lohner-Porsche featuring a wheel hub mounted motor had a range of 50 kilometres, and was a big hit at the 1900 Exposition Universelle in Paris. In the same year, Porsche developed the Semper Vivus, the world’s first functional hybrid vehicle to go into production.</p>
+                    <h3>Design</h3>
+                    <p>After having undertaken a number of minor projects, in 1933 the design company was awarded the lucrative contract to build a race car for Auto Union. </p>
+                </div>
+                <div>
+                    <p>Following its launch in September 1964, the new 911 model was to become the cornerstone of the Porsche brand. Seven generations of the model have been built at the facility in Zuffenhausen near Stuttgart since start of production. The 911 has become a by-word for fulfilment of the automotive dream.</p>
+                    <h3>Main features: </h3>
+                    <ul>
+                        <li>High-performance coverage.</li>
+                        <li>Porsche Lease Loyalty Program.</li>
+                        <li>4-year/50,000-mile warranty</li>
+                        <li>Exclusive community</li>
+                        <li>Superior handling capabilities</li>
+                    </ul>
+                    <p>The P-type, weighing 750 kilograms and featuring a mid-mounted engine, was Porsche’s <mark>first grand-prix car design</mark>car design, and assured the continued existence of the business. </p>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Будильник (8)</title>
+    <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+
+<style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #007bff;
+      text-align: center;
+      font-weight: 800;
+    }
+
+</style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Будильник</h1>
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label for="alarmTime" class="form-label">Дата та час будильника:</label>
+                <input type="datetime-local" id="alarmTime" class="form-control">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="addAlarmBtn" class="btn btn-primary">Додати</button>
+            </div>
+        </div>
+        <h2>Заведені будильники: </h2>
+        <ul id="alarmList" class="list-group"></ul>       <!--з скрипта-->
+   </div>
+
+<script>
+    const alarms = [];           //масив для збереження  будильників  
+   
+
+    function renderAlarms() {                //відображення списку будильників на сторінці
+      const list = document.getElementById('alarmList');
+      list.innerHTML = '';
+      alarms.forEach(alarm => {                    //створюємо елемент <li> для кожного будильника 
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
+
+          <span>${alarm.time.toLocaleString()}</span>         <!--відформатований час будильника -->
+          <div>
+            <input type="checkbox" ${alarm.enabled ? 'checked' : ''} data-id="${alarm.id}" class="form-check-input me-2 enable-checkbox">
+            <button class="btn btn-sm btn-danger" data-id="${alarm.id}">Видалити</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+
+    document.getElementById('addAlarmBtn').addEventListener('click', () => { //створення нового будильника  по кнопці "додати"
+      const input = document.getElementById('alarmTime');
+      //перевіряємо чи користувач ввів значення
+      if (input.value) {
+        const time = new Date(input.value);       
+        const id = Date.now();                    
+        alarms.push({ id, time, enabled: true, triggered: false });
+        renderAlarms();                        
+      }
+    });
+
+
+    document.getElementById('alarmList').addEventListener('click', (e) => {  //видалення  будильника  з масиву
+      const id = +e.target.getAttribute('data-id');
+      if (e.target.tagName === 'BUTTON') { 
+        const index = alarms.findIndex(a => a.id === id);  //знаходимо індекс
+        if (index > -1) {
+          alarms.splice(index, 1);
+          renderAlarms();
+        }
+      }
+    });
+
+    document.getElementById('alarmList').addEventListener('change', (e) => {   // увімкнення/вимкнення по чекбоксу
+      if (e.target.classList.contains('enable-checkbox')) {
+        const id = +e.target.getAttribute('data-id');
+        const alarm = alarms.find(a => a.id === id);
+        if (alarm) {
+          alarm.enabled = e.target.checked;
+        }
+      }
+    });
+
+
+    setInterval(() => {
+      const now = new Date();    //поточниц час
+      alarms.forEach(alarm => {
+        //вспливаюче повідомлення про спрацювання
+        if (alarm.enabled && !alarm.triggered && now >= alarm.time) {
+          alert(`Час будильника: ${alarm.time.toLocaleString()}`);
+          alarm.triggered = true;  
+          alarm.enabled = false;  
+          renderAlarms();    
+        }
+      });
+    }, 1000);
+  </script>
+
+</body>
+</html>

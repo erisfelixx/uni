@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>lecture12_2</title>
+</head>
+<body>
+<script>
+(function() {
+    function cost(hrn, kop) {
+        const extraHrn = Math.floor(kop / 100);
+        const totalHrn = hrn + extraHrn;
+        const totalKop = kop % 100;
+        
+        const hrnForm = (n => {
+            const mod10 = n % 10;
+            const mod100 = n % 100;
+            if (mod10 === 1 && mod100 !== 11) return 'гривня';
+            if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'гривні';
+            return 'гривень';
+        })(totalHrn);
+        
+        const kopForm = (n => {
+            const mod10 = n % 10;
+            const mod100 = n % 100;
+            if (mod10 === 1 && mod100 !== 11) return 'копійка';
+            if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'копійки';
+            return 'копійок';
+        })(totalKop);
+        return `Вартість замовлення: ${totalHrn} ${hrnForm} ${totalKop} ${kopForm}`;
+    }
+    
+    let hrn, kop;
+    do {
+        const input = prompt('Введіть кількість гривень:');
+        if (input === null) { alert('Скасовано'); return; }
+        hrn = parseInt(input.replace(',', '.'), 10);
+    } while (isNaN(hrn));
+    
+    do {
+        const input = prompt('Введіть кількість копійок:');
+        if (input === null) { alert('Скасовано'); return; }
+        kop = parseInt(input.replace(',', '.'), 10);
+    } while (isNaN(kop));
+    
+    alert(cost(hrn, kop));
+    })
+    ();
+</script>
+</body>
+</html>

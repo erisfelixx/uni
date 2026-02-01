@@ -1,3 +1,4 @@
-| Course | Semester | Subjects |
-|--------|----------|----------|
-| 3 course | sem 5 | [• Modeling of Complex Systems](https://github.com/erisfelixx/uni/tree/main/5-sem/modeling-of-complex-systems)<br>[• Distributed Computing](https://github.com/erisfelixx/uni/tree/main/5-sem/distributed-computing)<br>[• Numerical Methods](https://github.com/erisfelixx/uni/tree/main/5-sem/numerical-methods)<br>[• NoSQL](https://github.com/erisfelixx/uni/tree/main/5-sem/nosql)<br>[• Operating Systems](https://github.com/erisfelixx/uni/tree/main/5-sem/nosql)<br>[• OOP](https://github.com/erisfelixx/uni/tree/main/5-sem/oop) |
+| Course   | Semester | Subjects |
+|----------|----------|----------|
+| 2 course | sem 4    | [• Web](https://github.com/erisfelixx/uni/tree/main/4-sem/web)<br>[• Math Logic](https://github.com/erisfelixx/uni/tree/main/4-sem/math-logic)<br>[• Algorithms and Complexity](https://github.com/erisfelixx/uni/tree/main/4-sem/algorithms) |
+| 3 course | sem 5    | [• Modeling of Complex Systems](https://github.com/erisfelixx/uni/tree/main/5-sem/modeling-of-complex-systems)<br>[• Distributed Computing](https://github.com/erisfelixx/uni/tree/main/5-sem/distributed-computing)<br>[• Numerical Methods](https://github.com/erisfelixx/uni/tree/main/5-sem/numerical-methods)<br>[• NoSQL](https://github.com/erisfelixx/uni/tree/main/5-sem/nosql)<br>[• Operating Systems](https://github.com/erisfelixx/uni/tree/main/5-sem/operating-systems)<br>[• OOP](https://github.com/erisfelixx/uni/tree/main/5-sem/oop) |

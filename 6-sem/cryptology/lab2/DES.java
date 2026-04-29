@@ -165,4 +165,108 @@ public class DES {
         return v;
     }
 
+
+
+    
+    //розгортання ключа: 64 бітний ключ -> 16 підключів по 48 біт
+    //кожен 8-й біт у DES - перевірочний (ігнорується через PC-1)
+
+    public static int[][] generateSubkeys(long keyLong) {
+
+        int[] key56 = permute(longToBits(keyLong), PC1);
+
+        int[] C = new int[28], D = new int[28];
+        System.arraycopy(key56,  0, C, 0, 28);
+        System.arraycopy(key56, 28, D, 0, 28);
+
+
+        int[][] subkeys = new int[16][];
+
+        for (int r = 0; r < 16; r++) {
+            C = rotateLeft(C, KEY_SHIFTS[r]);
+            D = rotateLeft(D, KEY_SHIFTS[r]);
+
+            int[] CD = new int[56];
+            System.arraycopy(C, 0, CD,  0, 28);
+            System.arraycopy(D, 0, CD, 28, 28);
+
+            subkeys[r] = permute(CD, PC2);
+        }
+        return subkeys;
+    }
+
+
+
+
+    //раундова функція F - Фейстель
+
+    private static int[] feistelF(int[] R32, int[] subkey48) {
+
+        int[] expanded = permute(R32, E);  //крок 1: розширення 32 -> 48 біт
+
+        int[] mixed = xor(expanded, subkey48); //крок 2: XOR із підключем
+
+        //крок 3–4: S-блоки — 8 груп по 6 біт -> 8 груп по 4 біти
+        int[] sOut = new int[32];
+        for (int i = 0; i < 8; i++) {
+
+            int row = (mixed[i*6] << 1) | mixed[i*6 + 5];         //рядок - перший(0) і останній(5) біти
+            int col = (mixed[i*6+1] << 3) | (mixed[i*6+2] << 2)   //стовпець - 1-4 біти
+                    | (mixed[i*6+3] << 1) |  mixed[i*6+4];
+            int val = S[i][row][col];
+
+            for (int b = 3; b >= 0; b--)
+                sOut[i*4 + (3-b)] = (val >> b) & 1;
+        }
+
+        return permute(sOut, P);  //крок 5: p-перестановка
+    }
+
+
+
+    
+
+    //шифрування одного 64-бітного блоку із заданим набором підключів
+
+    private static long processBlock(long blockLong, int[][] subkeys) {
+
+        int[] bits = permute(longToBits(blockLong), IP);
+
+        int[] L = new int[32], R = new int[32];
+        System.arraycopy(bits,  0, L, 0, 32);
+        System.arraycopy(bits, 32, R, 0, 32);
+
+        //16 раундів Фейстеля:
+        // L_i = R_{i-1}
+        // R_i = L_{i-1} XOR F(K_i, R_{i-1})
+
+        for (int r = 0; r < 16; r++) {
+            int[] newR = xor(L, feistelF(R, subkeys[r]));
+            L = R;
+            R = newR;
+
+        }
+
+        //після останнього раунду об'єднуємо R і L
+        int[] combined = new int[64];
+        System.arraycopy(R, 0, combined,  0, 32);
+        System.arraycopy(L, 0, combined, 32, 32);
+
+        return bitsToLong(permute(combined, IP_INV));
+    }
+
+
+    /** обробка одного 64 бітного DES-блоку */
+    public static long encrypt(long block, int[][] subkeys) {
+        return processBlock(block, subkeys);
+    }
+
+
+    /** розшифрування одного 64 бітний блок (підключі у зворотному порядку) */
+    public static long decrypt(long block, int[][] subkeys) {
+        int[][] rev = new int[16][];
+        for (int i = 0; i < 16; i++) rev[i] = subkeys[15 - i];
+        return processBlock(block, rev);
+    }
+
 }

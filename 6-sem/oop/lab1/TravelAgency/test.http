@@ -1,0 +1,9 @@
+POST http://localhost:8080/TravelAgency/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Анна Совгиря",
+  "email": "anna@test.com",
+  "password": "supersecretpassword",
+  "role": "CUSTOMER"
+}

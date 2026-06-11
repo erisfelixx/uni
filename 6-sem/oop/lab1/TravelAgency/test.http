@@ -7,3 +7,12 @@ Content-Type: application/json
   "password": "supersecretpassword",
   "role": "CUSTOMER"
 }
+
+###
+POST http://localhost:8080/TravelAgency/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "anna@test.com",
+  "password": "supersecretpassword"
+}

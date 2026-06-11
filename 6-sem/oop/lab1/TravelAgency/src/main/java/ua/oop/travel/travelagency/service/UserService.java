@@ -1,6 +1,7 @@
 package ua.oop.travel.travelagency.service;
 
 import ua.oop.travel.travelagency.dao.UserDao;
+import ua.oop.travel.travelagency.dto.AuthResponseDto;
 import ua.oop.travel.travelagency.dto.UserDto;
 import ua.oop.travel.travelagency.mapper.UserMapper;
 import ua.oop.travel.travelagency.model.User;
@@ -45,6 +46,20 @@ public class UserService {
             if (user.getPasswordHash().equals(targetHash)) {
                 return Optional.of(userMapper.toDto(user));
             }
+        }
+        return Optional.empty();
+    }
+
+    // метод для повної аутентифікації користувача (з генерацією JWT токена)
+    public Optional<AuthResponseDto> authenticate(String email, String password) throws SQLException {
+        Optional<UserDto> userDtoOpt = login(email, password); // викликаємо наш старий метод перевірки
+
+        if (userDtoOpt.isPresent()) {
+            UserDto userDto = userDtoOpt.get();
+            // якщо логін успішний — генеруємо токен
+            String token = JwtUtil.generateToken(userDto);
+            // повертаємо DTO разом із токеном
+            return Optional.of(new AuthResponseDto(userDto, token));
         }
         return Optional.empty();
     }

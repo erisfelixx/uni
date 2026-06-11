@@ -16,3 +16,32 @@ Content-Type: application/json
   "email": "anna@test.com",
   "password": "supersecretpassword"
 }
+
+### спроба створити тур БЕЗ токена (має бути помилка 401)
+POST http://localhost:8080/TravelAgency/api/tours
+Content-Type: application/json
+
+{
+  "title": "Вікенд у Парижі",
+  "description": "Романтична подорож на 3 дні",
+  "tourType": "EXCURSION",
+  "basePrice": 350.00,
+  "isHot": true
+}
+
+### Створення туру З токеном
+POST http://localhost:8080/TravelAgency/api/tours
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbm5hQHRlc3QuY29tIiwiaWQiOjEsInJvbGUiOiJDVVNUT01FUiIsImZ1bGxOYW1lIjoi0JDQvdC90LAg0KHQvtCy0LPQuNGA0Y8iLCJpYXQiOjE3ODEyMTEwODUsImV4cCI6MTc4MTI5NzQ4NX0.RnDAsOPmpJ0mb9K5BvPEMWgw5OriyPkC0A2i5skrI9s
+
+{
+  "title": "Вікенд у Парижі",
+  "description": "Романтична подорож на 3 дні",
+  "tourType": "EXCURSION",
+  "basePrice": 350.00,
+  "isHot": true
+}
+
+
+### Отримання списку всіх турів
+GET http://localhost:8080/TravelAgency/api/tours

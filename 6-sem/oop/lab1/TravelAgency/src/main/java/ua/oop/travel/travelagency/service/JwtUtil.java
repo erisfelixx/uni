@@ -24,4 +24,10 @@ public class JwtUtil {
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // час завершення дії
                 .sign(ALGORITHM);
     }
+    // метод для перевірки токена (валідації)
+    public static com.auth0.jwt.interfaces.DecodedJWT verifyToken(String token) {
+        return JWT.require(ALGORITHM)
+                .build()
+                .verify(token);
+    }
 }

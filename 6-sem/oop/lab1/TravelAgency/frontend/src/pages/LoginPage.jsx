@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import api from '../api/axiosConfig';
 
@@ -57,6 +57,9 @@ export default function LoginPage() {
                     Увійти
                 </button>
             </form>
+            <p style={{ marginTop: '20px', textAlign: 'center' }}>
+                Немає акаунту? <Link to="/register">Зареєструватися</Link>
+            </p>
         </div>
     );
 }

@@ -56,7 +56,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "customerId": 1,
+  "customerId": 3,
   "tourId": 1,
   "finalPrice": 350.00
 }
@@ -88,3 +88,14 @@ Content-Type: application/json
 > {%
     client.global.set("auth_token", response.body.token);
 %}
+
+### 10. реєстрація нового клієнта для тесту знижки
+POST http://localhost:8080/TravelAgency/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Тестер Знижок",
+  "email": "discount@test.com",
+  "password": "password",
+  "role": "CUSTOMER"
+}

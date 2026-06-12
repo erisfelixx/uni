@@ -24,6 +24,12 @@ public class JwtFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        // пропускаємо OPTIONS-запити (це перевірка CORS від браузера)
+        if (httpRequest.getMethod().equalsIgnoreCase("OPTIONS")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // якщо це GET-запит для турів — дозволяємо доступ без токена
         if (httpRequest.getMethod().equalsIgnoreCase("GET") && httpRequest.getRequestURI().contains("/api/tours")) {
             logger.info("Публічний доступ до GET /api/tours");
@@ -46,6 +52,7 @@ public class JwtFilter implements Filter {
                 request.setAttribute("userId", decodedJWT.getClaim("id").asInt());
 
                 logger.info("Авторизація успішна для ролі: {}", role);
+
                 // якщо помилки не виникло - токен валідний - пускаємо запит далі до сервлета
                 chain.doFilter(request, response);
                 return;

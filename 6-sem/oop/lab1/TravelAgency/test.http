@@ -1,3 +1,4 @@
+### 1. Реєстрація
 POST http://localhost:8080/TravelAgency/api/auth/register
 Content-Type: application/json
 
@@ -8,7 +9,7 @@ Content-Type: application/json
   "role": "CUSTOMER"
 }
 
-###
+### 2. Логін
 POST http://localhost:8080/TravelAgency/api/auth/login
 Content-Type: application/json
 
@@ -17,7 +18,11 @@ Content-Type: application/json
   "password": "supersecretpassword"
 }
 
-### спроба створити тур БЕЗ токена (має бути помилка 401)
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### 3. Спроба створити тур БЕЗ токена (має бути помилка 401)
 POST http://localhost:8080/TravelAgency/api/tours
 Content-Type: application/json
 
@@ -29,10 +34,10 @@ Content-Type: application/json
   "isHot": true
 }
 
-### Створення туру З токеном
+### 4. Створення туру З токеном (Використовуємо змінну)
 POST http://localhost:8080/TravelAgency/api/tours
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbm5hQHRlc3QuY29tIiwiaWQiOjEsInJvbGUiOiJDVVNUT01FUiIsImZ1bGxOYW1lIjoi0JDQvdC90LAg0KHQvtCy0LPQuNGA0Y8iLCJpYXQiOjE3ODEyMTEwODUsImV4cCI6MTc4MTI5NzQ4NX0.RnDAsOPmpJ0mb9K5BvPEMWgw5OriyPkC0A2i5skrI9s
+Authorization: Bearer {{auth_token}}
 
 {
   "title": "Вікенд у Парижі",
@@ -42,6 +47,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbm5hQHRlc
   "isHot": true
 }
 
-
-### Отримання списку всіх турів
+### 5. Отримання списку всіх турів (Публічний доступ)
 GET http://localhost:8080/TravelAgency/api/tours
+
+### 6. Створення нового бронювання (Використовуємо змінну)
+POST http://localhost:8080/TravelAgency/api/bookings
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "customerId": 1,
+  "tourId": 1,
+  "finalPrice": 350.00
+}
+
+### 7. Отримання списку бронювань клієнта (Використовуємо змінну)
+GET http://localhost:8080/TravelAgency/api/bookings?customerId=1
+Authorization: Bearer {{auth_token}}

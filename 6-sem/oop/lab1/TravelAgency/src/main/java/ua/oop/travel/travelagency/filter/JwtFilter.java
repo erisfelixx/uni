@@ -1,6 +1,7 @@
 package ua.oop.travel.travelagency.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +32,13 @@ public class JwtFilter implements Filter {
             String token = authHeader.substring(7); // щоб отримати чистий токен
 
             try {
-                JwtUtil.verifyToken(token);
+                // валідуємо токен та отримуємо його розшифрований вміст
+                DecodedJWT decodedJWT = JwtUtil.verifyToken(token);
+
+                // дістаємо роль та id з токена і кладемо їх в атрибути запиту
+                request.setAttribute("userRole", decodedJWT.getClaim("role").asString());
+                request.setAttribute("userId", decodedJWT.getClaim("id").asInt());
+
                 // якщо помилки не виникло - токен валідний - пускаємо запит далі до сервлета
                 chain.doFilter(request, response);
                 return;

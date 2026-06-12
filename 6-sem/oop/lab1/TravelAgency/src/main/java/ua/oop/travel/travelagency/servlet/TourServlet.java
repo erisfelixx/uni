@@ -41,6 +41,16 @@ public class TourServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
+            // читаємо роль з атрибутів запиту, яку туди поклав JWTFilter
+            String userRole = (String) request.getAttribute("userRole");
+
+            // перевіряємо, чи має користувач права на створення туру (тільки agent або admin)
+            if (!"AGENT".equals(userRole) && !"ADMIN".equals(userRole)) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                objectMapper.writeValue(response.getWriter(), Map.of("error", "Доступ заборонено! Тільки турагенти можуть створювати тури."));
+                return;
+            }
+
             TourDto tourDto = objectMapper.readValue(request.getInputStream(), TourDto.class);
 
             TourDto savedTour = tourService.createTour(tourDto);

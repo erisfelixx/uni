@@ -64,3 +64,27 @@ Authorization: Bearer {{auth_token}}
 ### 7. Отримання списку бронювань клієнта (Використовуємо змінну)
 GET http://localhost:8080/TravelAgency/api/bookings?customerId=1
 Authorization: Bearer {{auth_token}}
+
+### 8. Реєстрація турагента
+POST http://localhost:8080/TravelAgency/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Боб Агент",
+  "email": "agent@test.com",
+  "password": "agentpassword",
+  "role": "AGENT"
+}
+
+### 9. Логін турагента (оновлює змінну auth_token)
+POST http://localhost:8080/TravelAgency/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "agent@test.com",
+  "password": "agentpassword"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}

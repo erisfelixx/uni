@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BookingService {
     private static final Logger logger = LogManager.getLogger(BookingService.class);
-    private final BookingDao bookingDao = new BookingDao();
+    private BookingDao bookingDao = new BookingDao();
     private final BookingMapper bookingMapper = BookingMapper.INSTANCE;
 
     // створення нового бронювання зі знижками

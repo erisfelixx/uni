@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="1" author="annasovhyria">
+        <!-- 1. Таблиця користувачів -->
+        <createTable tableName="users">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="full_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password_hash" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="annasovhyria">
+        <!-- 2. Таблиця знижок -->
+        <createTable tableName="discounts">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int"/>
+            <column name="discount_percentage" type="decimal(5,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="discounts" baseColumnNames="user_id"
+                                 constraintName="fk_discounts_user_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <!-- Кастомне обмеження для відсотків -->
+        <sql>
+            ALTER TABLE discounts ADD CONSTRAINT check_discount_percentage CHECK (discount_percentage &gt;= 0 AND discount_percentage &lt;= 100);
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="annasovhyria">
+        <!-- 3. Таблиця турів -->
+        <createTable tableName="tours">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="tour_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="base_price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_hot" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="annasovhyria">
+        <!-- 4. Таблиця бронювань -->
+        <createTable tableName="bookings">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="customer_id" type="int"/>
+            <column name="tour_id" type="int"/>
+            <column name="status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="final_price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="customer_id"
+                                 constraintName="fk_bookings_customer_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="tour_id"
+                                 constraintName="fk_bookings_tour_id"
+                                 referencedTableName="tours" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="5" author="annasovhyria">
+        <!-- 5. Таблиця оплат -->
+        <createTable tableName="payments">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="booking_id" type="int"/>
+            <column name="amount" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="payments" baseColumnNames="booking_id"
+                                 constraintName="fk_payments_booking_id"
+                                 referencedTableName="bookings" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

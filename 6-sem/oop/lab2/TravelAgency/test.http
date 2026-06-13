@@ -1,0 +1,101 @@
+### 1. Реєстрація
+POST http://localhost:8080/TravelAgency/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Анна Совгиря",
+  "email": "anna@test.com",
+  "password": "supersecretpassword",
+  "role": "CUSTOMER"
+}
+
+### 2. Логін
+POST http://localhost:8080/TravelAgency/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "anna@test.com",
+  "password": "supersecretpassword"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### 3. Спроба створити тур БЕЗ токена (має бути помилка 401)
+POST http://localhost:8080/TravelAgency/api/tours
+Content-Type: application/json
+
+{
+  "title": "Вікенд у Парижі",
+  "description": "Романтична подорож на 3 дні",
+  "tourType": "EXCURSION",
+  "basePrice": 350.00,
+  "isHot": true
+}
+
+### 4. Створення туру З токеном (Використовуємо змінну)
+POST http://localhost:8080/TravelAgency/api/tours
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Вікенд у Парижі",
+  "description": "Романтична подорож на 3 дні",
+  "tourType": "EXCURSION",
+  "basePrice": 350.00,
+  "isHot": true
+}
+
+### 5. Отримання списку всіх турів (Публічний доступ)
+GET http://localhost:8080/TravelAgency/api/tours
+
+### 6. Створення нового бронювання (Використовуємо змінну)
+POST http://localhost:8080/TravelAgency/api/bookings
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "customerId": 3,
+  "tourId": 1,
+  "finalPrice": 350.00
+}
+
+### 7. Отримання списку бронювань клієнта (Використовуємо змінну)
+GET http://localhost:8080/TravelAgency/api/bookings?customerId=1
+Authorization: Bearer {{auth_token}}
+
+### 8. Реєстрація турагента
+POST http://localhost:8080/TravelAgency/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Боб Агент",
+  "email": "agent@test.com",
+  "password": "agentpassword",
+  "role": "AGENT"
+}
+
+### 9. Логін турагента (оновлює змінну auth_token)
+POST http://localhost:8080/TravelAgency/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "agent@test.com",
+  "password": "agentpassword"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### 10. реєстрація нового клієнта для тесту знижки
+POST http://localhost:8080/TravelAgency/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Тестер Знижок",
+  "email": "discount@test.com",
+  "password": "password",
+  "role": "CUSTOMER"
+}

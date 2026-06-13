@@ -18,7 +18,7 @@ import java.util.Map;
 public class TourServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(TourServlet.class);
-    private final TourService tourService = new TourService();
+    private TourService tourService = new TourService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // обробка GET-запитів (отримання списку турів)

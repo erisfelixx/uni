@@ -15,7 +15,7 @@ import java.util.Optional;
 @WebServlet("/api/auth/login")
 public class LoginServlet extends HttpServlet {
 
-    private final UserService userService = new UserService();
+    private UserService userService = new UserService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

@@ -6,6 +6,11 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import Header from './components/Header';
 import RegisterPage from './pages/RegisterPage';
 
+const interFont = document.createElement('link');
+interFont.rel = 'stylesheet';
+interFont.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap';
+document.head.appendChild(interFont);
+
 // компонент-обгортка для відображення меню
 function Layout({ children }) {
     const location = useLocation();
@@ -15,7 +20,8 @@ function Layout({ children }) {
     return (
         <>
             {showHeader && <Header />}
-            <div style={{ padding: '20px' }}>
+            {/* padding прибрано — кожна сторінка керує своїми відступами самостійно */}
+            <div>
                 {children}
             </div>
         </>

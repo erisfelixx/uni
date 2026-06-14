@@ -3,7 +3,8 @@ package ua.oop.travel.travelagency.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.oop.travel.travelagency.entity.Tour;
+import ua.oop.travel.travelagency.dto.TourDto;
+import ua.oop.travel.travelagency.mapper.TourMapper;
 import ua.oop.travel.travelagency.service.TourService;
 
 import java.util.List;
@@ -15,19 +16,20 @@ import java.util.List;
 public class TourController {
 
     private final TourService tourService;
+    private final TourMapper tourMapper;
 
     @GetMapping
-    public List<Tour> getAllTours() {
-        return tourService.getAllTours();
+    public List<TourDto> getAllTours() {
+        return tourMapper.toDtoList(tourService.getAllTours());
     }
 
     @GetMapping("/hot")
-    public List<Tour> getHotTours() {
-        return tourService.getHotTours();
+    public List<TourDto> getHotTours() {
+        return tourMapper.toDtoList(tourService.getHotTours());
     }
 
     @PatchMapping("/{id}/hot")
-    public ResponseEntity<Tour> setHotStatus(@PathVariable Integer id, @RequestParam boolean isHot) {
-        return ResponseEntity.ok(tourService.setHotStatus(id, isHot));
+    public ResponseEntity<TourDto> setHotStatus(@PathVariable Integer id, @RequestParam boolean isHot) {
+        return ResponseEntity.ok(tourMapper.toDto(tourService.setHotStatus(id, isHot)));
     }
 }

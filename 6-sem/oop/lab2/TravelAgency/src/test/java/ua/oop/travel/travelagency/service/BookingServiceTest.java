@@ -5,81 +5,76 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.oop.travel.travelagency.dao.BookingDao;
-import ua.oop.travel.travelagency.dto.BookingDto;
-import ua.oop.travel.travelagency.model.Booking;
+import ua.oop.travel.travelagency.entity.Booking;
+import ua.oop.travel.travelagency.entity.Discount;
+import ua.oop.travel.travelagency.entity.Tour;
+import ua.oop.travel.travelagency.entity.User;
+import ua.oop.travel.travelagency.repository.BookingRepository;
+import ua.oop.travel.travelagency.repository.DiscountRepository;
+import ua.oop.travel.travelagency.repository.TourRepository;
+import ua.oop.travel.travelagency.repository.UserRepository;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-// підключаємо Mockito до нашого тестового класу
 @ExtendWith(MockitoExtension.class)
-class BookingServiceTest {
+public class BookingServiceTest {
 
-    // створюємо "фейковий" DAO, який не ходить у базу даних
-    @Mock
-    private BookingDao bookingDao;
+    @Mock private BookingRepository bookingRepository;
+    @Mock private TourRepository tourRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private DiscountRepository discountRepository;
 
-    // просимо Mockito підставити наш фейковий DAO всередину реального BookingService
-    @InjectMocks
-    private BookingService bookingService;
+    @InjectMocks private BookingService bookingService;
 
     @Test
-    void createBooking_NoDiscountForNewCustomer() throws SQLException {
-        // 1. ПІДГОТОВКА ДАНИХ (Arrange)
-        BookingDto requestDto = new BookingDto();
-        requestDto.setCustomerId(1);
-        requestDto.setTourId(101); // ДОДАНО: обов'язкове поле для уникнення NullPointerException
-        requestDto.setFinalPrice(new BigDecimal("1000.00"));
+    public void createBooking_NoDiscountForNewCustomer() {
+        // Arrange
+        User user = new User();
+        user.setId(1);
 
-        // вчимо фейковий DAO відповідати: "у цього клієнта ще 0 бронювань"
-        when(bookingDao.findAllByCustomerId(1)).thenReturn(List.of());
+        Tour tour = new Tour();
+        tour.setId(101);
+        tour.setBasePrice(new BigDecimal("1000.00"));
 
-        // вчимо фейковий DAO при збереженні просто повертати те, що йому передали
-        when(bookingDao.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(tourRepository.findById(101)).thenReturn(Optional.of(tour));
+        when(discountRepository.findByUserId(1)).thenReturn(Optional.empty()); // No discount
 
-        // 2. ВИКОНАННЯ (Act)
-        BookingDto resultDto = bookingService.createBooking(requestDto);
+        when(bookingRepository.save(any(Booking.class))).thenAnswer(i -> i.getArgument(0));
 
-        // 3. ПЕРЕВІРКА (Assert)
-        // очікуємо, що ціна залишиться 1000.00
-        assertEquals(new BigDecimal("1000.00"), resultDto.getFinalPrice());
+        Booking result = bookingService.createBooking(1, 101);
 
-        // перевіряємо, що сервіс рівно 1 раз викликав метод пошуку і 1 раз метод збереження
-        verify(bookingDao, times(1)).findAllByCustomerId(1);
-        verify(bookingDao, times(1)).save(any(Booking.class));
+        assertEquals(new BigDecimal("1000.00"), result.getFinalPrice());
+        verify(bookingRepository, times(1)).save(any(Booking.class));
     }
 
     @Test
-    void createBooking_AppliesDiscountForLoyalCustomer() throws SQLException {
-        // 1. ПІДГОТОВКА ДАНИХ (Arrange)
-        BookingDto requestDto = new BookingDto();
-        requestDto.setCustomerId(99);
-        requestDto.setTourId(102); // ДОДАНО: обов'язкове поле для уникнення NullPointerException
-        requestDto.setFinalPrice(new BigDecimal("1000.00")); // початкова ціна 1000
+    public void createBooking_AppliesDiscount() {
+        // Arrange
+        User user = new User();
+        user.setId(99);
 
-        // створюємо два фейкові попередні бронювання
-        Booking pastBooking1 = new Booking();
-        Booking pastBooking2 = new Booking();
+        Tour tour = new Tour();
+        tour.setId(102);
+        tour.setBasePrice(new BigDecimal("1000.00"));
 
-        // вчимо фейковий DAO відповідати: "у цього клієнта вже є 2 бронювання"
-        when(bookingDao.findAllByCustomerId(99)).thenReturn(List.of(pastBooking1, pastBooking2));
+        Discount discount = new Discount();
+        discount.setDiscountPercentage(new BigDecimal("10.00")); // 10% discount
 
-        // вчимо фейковий DAO повертати переданий об'єкт
-        when(bookingDao.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.findById(99)).thenReturn(Optional.of(user));
+        when(tourRepository.findById(102)).thenReturn(Optional.of(tour));
+        when(discountRepository.findByUserId(99)).thenReturn(Optional.of(discount));
 
-        // 2. ВИКОНАННЯ (Act)
-        BookingDto resultDto = bookingService.createBooking(requestDto);
+        when(bookingRepository.save(any(Booking.class))).thenAnswer(i -> i.getArgument(0));
 
-        // 3. ПЕРЕВІРКА (Assert)
-        // очікуємо, що ціна стала 900.00 (1000 мінус 10%)
-        // використовуємо compareTo для порівняння BigDecimal, бо "900.00" і "900.0" математично рівні
-        assertEquals(0, new BigDecimal("900.00").compareTo(resultDto.getFinalPrice()),
-                "Ціна має бути знижена на 10%");
+        Booking result = bookingService.createBooking(99, 102);
+
+        assertEquals(0, new BigDecimal("900.00").compareTo(result.getFinalPrice()));
+        verify(bookingRepository, times(1)).save(any(Booking.class));
     }
 }

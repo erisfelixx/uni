@@ -1,94 +1,21 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import api from '../api/axiosConfig';
+import axios from 'axios'; // Використовуємо чистий axios, бо запит йде до Keycloak
 
 const styles = {
-    page: {
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: "'Inter', sans-serif",
-        backgroundColor: '#fafafa',
-    },
-    card: {
-        width: '100%',
-        maxWidth: '380px',
-        backgroundColor: '#fff',
-        border: '0.5px solid rgba(0,0,0,0.12)',
-        borderRadius: '12px',
-        padding: '2.5rem 2rem',
-    },
-    title: {
-        fontSize: '22px',
-        fontWeight: 500,
-        margin: '0 0 0.25rem',
-        letterSpacing: '-0.01em',
-        color: '#1a1a1a',
-    },
-    subtitle: {
-        fontSize: '14px',
-        color: '#888',
-        margin: '0 0 2rem',
-    },
-    errorText: {
-        fontSize: '13px',
-        color: '#A32D2D',
-        backgroundColor: '#FAECE7',
-        padding: '10px 14px',
-        borderRadius: '6px',
-        marginBottom: '1.25rem',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.25rem',
-    },
-    field: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-    },
-    label: {
-        fontSize: '13px',
-        fontWeight: 500,
-        color: '#444',
-    },
-    input: {
-        padding: '9px 12px',
-        fontSize: '14px',
-        border: '0.5px solid rgba(0,0,0,0.18)',
-        borderRadius: '8px',
-        outline: 'none',
-        fontFamily: "'Inter', sans-serif",
-        color: '#1a1a1a',
-        backgroundColor: '#fff',
-        transition: 'border-color 0.15s',
-    },
-    submitBtn: {
-        marginTop: '0.5rem',
-        padding: '10px',
-        backgroundColor: '#1a1a1a',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '8px',
-        fontSize: '14px',
-        fontWeight: 500,
-        cursor: 'pointer',
-        fontFamily: "'Inter', sans-serif",
-        transition: 'opacity 0.15s',
-    },
-    footer: {
-        marginTop: '1.5rem',
-        textAlign: 'center',
-        fontSize: '13px',
-        color: '#888',
-    },
-    footerLink: {
-        color: '#1a1a1a',
-        fontWeight: 500,
-        textDecoration: 'none',
-    },
+    // ... твої стилі залишаються без змін ...
+    page: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', sans-serif", backgroundColor: '#fafafa' },
+    card: { width: '100%', maxWidth: '380px', backgroundColor: '#fff', border: '0.5px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2.5rem 2rem' },
+    title: { fontSize: '22px', fontWeight: 500, margin: '0 0 0.25rem', letterSpacing: '-0.01em', color: '#1a1a1a' },
+    subtitle: { fontSize: '14px', color: '#888', margin: '0 0 2rem' },
+    errorText: { fontSize: '13px', color: '#A32D2D', backgroundColor: '#FAECE7', padding: '10px 14px', borderRadius: '6px', marginBottom: '1.25rem' },
+    form: { display: 'flex', flexDirection: 'column', gap: '1.25rem' },
+    field: { display: 'flex', flexDirection: 'column', gap: '6px' },
+    label: { fontSize: '13px', fontWeight: 500, color: '#444' },
+    input: { padding: '9px 12px', fontSize: '14px', border: '0.5px solid rgba(0,0,0,0.18)', borderRadius: '8px', outline: 'none', fontFamily: "'Inter', sans-serif", color: '#1a1a1a', backgroundColor: '#fff', transition: 'border-color 0.15s' },
+    submitBtn: { marginTop: '0.5rem', padding: '10px', backgroundColor: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: "'Inter', sans-serif", transition: 'opacity 0.15s' },
+    footer: { marginTop: '1.5rem', textAlign: 'center', fontSize: '13px', color: '#888' },
+    footerLink: { color: '#1a1a1a', fontWeight: 500, textDecoration: 'none' }
 };
 
 export default function LoginPage() {
@@ -102,16 +29,24 @@ export default function LoginPage() {
         setError('');
 
         try {
-            // відправляємо запит на бекенд
-            const response = await api.post('/auth/login', { email, password });
+            // Keycloak приймає дані як x-www-form-urlencoded
+            const params = new URLSearchParams();
+            params.append('grant_type', 'password');
+            params.append('client_id', 'travel-client');
+            params.append('client_secret', 'Tl8Ar1CzA7SCQt9RDsYw4yLoBFoUFbhI');
+            params.append('username', email);
+            params.append('password', password);
 
-            // зберігаємо токен у пам'ять браузера
-            localStorage.setItem('token', response.data.token);
+            const response = await axios.post('http://localhost:8080/realms/travel-realm/protocol/openid-connect/token', params, {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+
+            // Keycloak повертає токен у полі access_token
+            localStorage.setItem('token', response.data.access_token);
             navigate('/tours');
 
         } catch (err) {
-            // обробка помилки (наприклад, неправильний пароль)
-            setError('помилка входу: ' + (err.response?.data?.error || 'невідома помилка'));
+            setError('Помилка входу: перевірте email або пароль');
         }
     };
 
@@ -125,9 +60,9 @@ export default function LoginPage() {
 
                 <form onSubmit={handleLogin} style={styles.form}>
                     <div style={styles.field}>
-                        <label style={styles.label}>Email</label>
+                        <label style={styles.label}>Email / Логін</label>
                         <input
-                            type="email"
+                            type="text"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required

@@ -60,9 +60,10 @@ export default function Header() {
     if (token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            userRole = payload.role;
+            if (payload.realm_access && payload.realm_access.roles.includes('AGENT')) {
+                userRole = 'AGENT';
+            }
         } catch (e) {
-            // ігноруємо помилки парсингу
         }
     }
 

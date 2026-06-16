@@ -146,37 +146,25 @@ export default function ToursPage() {
     // функція для створення бронювання при кліку на кнопку
     const handleBooking = async (tourId, basePrice) => {
         try {
-            // дістаємо токен, щоб зрозуміти, хто зараз залогінений
             const token = localStorage.getItem('token');
             if (!token) {
-                alert('будь ласка, увійдіть у систему!');
+                alert('Будь ласка, увійдіть у систему!');
                 return;
             }
 
-            // розшифровуємо payload токена (це середня частина jwt), щоб дістати id користувача
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            const customerId = payload.id;
+            const demoCustomerId = 1;
 
-            // формуємо дані для відправки на бекенд
-            const bookingData = {
-                customerId: customerId,
-                tourId: tourId,
-                finalPrice: basePrice
-            };
-
-            // відправляємо post-запит до booking servlet
-            const response = await api.post('/bookings', bookingData);
+            const response = await api.post(`/bookings?customerId=${demoCustomerId}&tourId=${tourId}`);
             const savedBooking = response.data;
 
-            // перевіряємо, чи бекенд застосував знижку, і показуємо відповідне повідомлення
             if (savedBooking.finalPrice < basePrice) {
-                alert(`вітаю! тур успішно заброньовано.\n\nвам автоматично застосовано знижку лояльності 10%!\nпочаткова ціна: ${basePrice} ₴\nваша ціна: ${savedBooking.finalPrice} ₴`);
+                alert(`Вітаю! Тур успішно заброньовано.\n\nВам автоматично застосовано знижку лояльності!\nПочаткова ціна: ${basePrice} ₴\nВаша ціна: ${savedBooking.finalPrice} ₴`);
             } else {
-                alert(`тур успішно заброньовано!\n\nдо сплати: ${savedBooking.finalPrice} ₴`);
+                alert(`Тур успішно заброньовано!\n\nДо сплати: ${savedBooking.finalPrice} ₴`);
             }
 
         } catch (err) {
-            alert('помилка бронювання: ' + (err.response?.data?.error || err.message));
+            alert('Помилка бронювання: ' + (err.response?.data?.error || err.message));
         }
     };
 

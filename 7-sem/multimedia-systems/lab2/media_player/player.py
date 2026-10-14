@@ -20,7 +20,7 @@ class MediaPlayer(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Медіаплеєр")
-        self.resize(640, 480)
+        self.resize(720, 640)
 
         # Рушій відтворення, вихід звуку, екран для відео
         self.player = QMediaPlayer()
@@ -33,7 +33,7 @@ class MediaPlayer(QWidget):
         # Кнопки
         self.open_btn = QPushButton("Відкрити файл")
         self.back_btn = QPushButton("-10 с")
-        self.play_btn = QPushButton("Play / Pause")
+        self.play_btn = QPushButton("Play")
         self.stop_btn = QPushButton("Stop")
         self.forward_btn = QPushButton("+10 с")
 
@@ -41,6 +41,10 @@ class MediaPlayer(QWidget):
         self.position_slider = QSlider(Qt.Horizontal)
         self.current_label = QLabel("00:00")
         self.total_label = QLabel("00:00")
+
+        # Назва поточного файлу
+        self.title_label = QLabel("Не вибрано файл")
+        self.title_label.setAlignment(Qt.AlignCenter)
 
         # Повзунок гучності
         self.volume_label = QLabel("Гучність")
@@ -67,6 +71,7 @@ class MediaPlayer(QWidget):
 
         self.player.positionChanged.connect(self.on_position_changed)
         self.player.durationChanged.connect(self.on_duration_changed)
+        self.player.playbackStateChanged.connect(self.on_state_changed)
         self.player.errorOccurred.connect(self.on_error)
         self.position_slider.sliderMoved.connect(self.player.setPosition)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
@@ -92,8 +97,9 @@ class MediaPlayer(QWidget):
         buttons_row.addWidget(self.volume_slider)
 
         layout = QVBoxLayout(self)
+        layout.addWidget(self.title_label)
         layout.addLayout(url_row)
-        layout.addWidget(self.video_widget)
+        layout.addWidget(self.video_widget, 1)
         layout.addLayout(progress_row)
         layout.addLayout(buttons_row)
 
@@ -103,12 +109,14 @@ class MediaPlayer(QWidget):
             "Медіа (*.mp3 *.wav *.mp4 *.mov);;Усі файли (*)",
         )
         if path:
+            self.title_label.setText(path.split("/")[-1])
             self.player.setSource(QUrl.fromLocalFile(path))
             self.player.play()
 
     def open_url(self):
         text = self.url_input.text().strip()
         if text:
+            self.title_label.setText(text)
             self.player.setSource(QUrl(text))
             self.player.play()
 
@@ -118,6 +126,10 @@ class MediaPlayer(QWidget):
         else:
             self.player.play()
 
+    def on_state_changed(self, state):
+        is_playing = state == QMediaPlayer.PlayingState
+        self.play_btn.setText("Pause" if is_playing else "Play")
+
     def seek_back(self):
         self.player.setPosition(max(0, self.player.position() - SEEK_STEP_MS))
 
@@ -126,7 +138,8 @@ class MediaPlayer(QWidget):
         self.player.setPosition(min(self.player.duration(), new_pos))
 
     def on_position_changed(self, position):
-        self.position_slider.setValue(position)
+        if not self.position_slider.isSliderDown():
+            self.position_slider.setValue(position)
         self.current_label.setText(format_time(position))
 
     def on_duration_changed(self, duration):

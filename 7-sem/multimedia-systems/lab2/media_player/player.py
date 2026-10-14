@@ -3,8 +3,8 @@ from PySide6.QtCore import Qt, QUrl
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
-    QApplication, QFileDialog, QHBoxLayout, QLabel,
-    QPushButton, QSlider, QVBoxLayout, QWidget,
+    QApplication, QFileDialog, QHBoxLayout, QLabel, QLineEdit,
+    QMessageBox, QPushButton, QSlider, QVBoxLayout, QWidget,
 )
 
 SEEK_STEP_MS = 10_000  # крок перемотки: 10 секунд
@@ -49,19 +49,33 @@ class MediaPlayer(QWidget):
         self.volume_slider.setValue(70)
         self.volume_slider.setFixedWidth(120)
 
+        # Поле для посилання та кнопка
+        self.url_input = QLineEdit()
+        self.url_input.setPlaceholderText(
+            "Вставте пряме посилання на медіафайл (.mp4, .mp3 ...)"
+        )
+        self.url_btn = QPushButton("Відтворити за URL")
+
         # Сигнали -> слоти
         self.open_btn.clicked.connect(self.open_file)
         self.back_btn.clicked.connect(self.seek_back)
         self.play_btn.clicked.connect(self.toggle_play)
         self.stop_btn.clicked.connect(self.player.stop)
         self.forward_btn.clicked.connect(self.seek_forward)
+        self.url_btn.clicked.connect(self.open_url)
+        self.url_input.returnPressed.connect(self.open_url)
 
         self.player.positionChanged.connect(self.on_position_changed)
         self.player.durationChanged.connect(self.on_duration_changed)
+        self.player.errorOccurred.connect(self.on_error)
         self.position_slider.sliderMoved.connect(self.player.setPosition)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
 
         # Розташування
+        url_row = QHBoxLayout()
+        url_row.addWidget(self.url_input)
+        url_row.addWidget(self.url_btn)
+
         progress_row = QHBoxLayout()
         progress_row.addWidget(self.current_label)
         progress_row.addWidget(self.position_slider)
@@ -78,6 +92,7 @@ class MediaPlayer(QWidget):
         buttons_row.addWidget(self.volume_slider)
 
         layout = QVBoxLayout(self)
+        layout.addLayout(url_row)
         layout.addWidget(self.video_widget)
         layout.addLayout(progress_row)
         layout.addLayout(buttons_row)
@@ -89,6 +104,12 @@ class MediaPlayer(QWidget):
         )
         if path:
             self.player.setSource(QUrl.fromLocalFile(path))
+            self.player.play()
+
+    def open_url(self):
+        text = self.url_input.text().strip()
+        if text:
+            self.player.setSource(QUrl(text))
             self.player.play()
 
     def toggle_play(self):
@@ -114,6 +135,9 @@ class MediaPlayer(QWidget):
 
     def on_volume_changed(self, value):
         self.audio_output.setVolume(value / 100)
+
+    def on_error(self, error, error_string):
+        QMessageBox.warning(self, "Помилка відтворення", error_string)
 
 
 app = QApplication(sys.argv)

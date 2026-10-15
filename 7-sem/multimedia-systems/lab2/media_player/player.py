@@ -1,15 +1,18 @@
 import sys
-from PySide6.QtCore import Qt, QSize, QUrl
+from pathlib import Path
+from PySide6.QtCore import Qt, QSettings, QSize, QUrl
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
     QApplication, QFileDialog, QFrame, QHBoxLayout, QLabel, QLineEdit,
-    QMessageBox, QPushButton, QSizePolicy, QSlider, QVBoxLayout, QWidget,
+    QListWidget, QListWidgetItem, QMessageBox, QPushButton, QSizePolicy,
+    QSlider, QVBoxLayout, QWidget,
 )
 from theme import ASSETS_DIR, STYLE, icon, load_pixel_font
 
 SEEK_STEP_MS = 10_000  # крок перемотки: 10 секунд
+RECENT_LIMIT = 10  # скільки останніх файлів пам'ятаємо
 
 
 def format_time(ms):
@@ -17,6 +20,16 @@ def format_time(ms):
     total_seconds = ms // 1000
     minutes, seconds = divmod(total_seconds, 60)
     return f"{minutes:02d}:{seconds:02d}"
+
+
+def is_url(source):
+    """True, якщо джерело — посилання, а не шлях до локального файлу."""
+    return source.startswith(("http://", "https://"))
+
+
+def source_title(source):
+    """Назва для показу: у файлу — ім'я без шляху, у посилання — воно саме."""
+    return source if is_url(source) else source.replace("\\", "/").split("/")[-1]
 
 
 class MediaPlayer(QWidget):
@@ -163,7 +176,8 @@ class MediaPlayer(QWidget):
         card_layout.addLayout(url_row)
         card_layout.addLayout(bottom_row)
 
-        # Права картка "Останнє переглянуте" — поки заглушка, наповнимо пізніше
+        # Права картка "Останнє переглянуте": список файлів, що зберігається між запусками
+        self.settings = QSettings("lab2", "MediaPlayer")  # сховище налаштувань ОС
         recent_icon = QLabel()
         recent_icon.setPixmap(
             QPixmap(str(ASSETS_DIR / "icons" / "recent.png")).scaled(
@@ -177,6 +191,12 @@ class MediaPlayer(QWidget):
         recent_header.addWidget(recent_title)
         recent_header.addStretch()
 
+        # Список (клік по елементу — відтворити) і напис для порожнього стану
+        self.recent_list = QListWidget()
+        self.recent_list.setObjectName("recent")
+        self.recent_list.setIconSize(QSize(32, 32))
+        self.recent_list.itemClicked.connect(self.play_recent)
+
         self.recent_empty = QLabel("Тут з'являтимуться\nостанні файли")
         self.recent_empty.setObjectName("empty")
         self.recent_empty.setAlignment(Qt.AlignCenter)
@@ -187,6 +207,7 @@ class MediaPlayer(QWidget):
         recent_layout = QVBoxLayout(recent_card)
         recent_layout.setContentsMargins(16, 14, 16, 14)
         recent_layout.addLayout(recent_header)
+        recent_layout.addWidget(self.recent_list, 1)
         recent_layout.addWidget(self.recent_empty, 1)
 
         # Логотип зверху
@@ -213,6 +234,8 @@ class MediaPlayer(QWidget):
         layout.addLayout(brand_row)
         layout.addLayout(body, 1)
 
+        self.refresh_recent()  # показуємо збережений список одразу після запуску
+
     def paintEvent(self, event):
         """Малює піксельний фон на все вікно (із збереженням пропорцій)."""
         painter = QPainter(self)
@@ -232,16 +255,60 @@ class MediaPlayer(QWidget):
             "Медіа (*.mp3 *.wav *.mp4 *.mov);;Усі файли (*)",
         )
         if path:
-            self.title_label.setText(path.split("/")[-1])
-            self.player.setSource(QUrl.fromLocalFile(path))
-            self.player.play()
+            self.play_source(path)
 
     def open_url(self):
         text = self.url_input.text().strip()
         if text:
-            self.title_label.setText(text)
-            self.player.setSource(QUrl(text))
-            self.player.play()
+            self.play_source(text)
+
+    def play_source(self, source):
+        """Запускає файл або посилання й запам'ятовує його у 'Останньому переглянутому'."""
+        self.title_label.setText(source_title(source))
+        if is_url(source):
+            self.player.setSource(QUrl(source))
+        else:
+            self.player.setSource(QUrl.fromLocalFile(source))
+        self.player.play()
+        self.add_recent(source)
+
+    def get_recent(self):
+        """Читає список останніх джерел зі сховища налаштувань."""
+        items = self.settings.value("recent", [])
+        if isinstance(items, str):  # якщо у списку один елемент, Qt повертає рядок
+            items = [items]
+        return list(items) if items else []
+
+    def add_recent(self, source):
+        """Ставить джерело на початок списку без дублікатів, обрізає до ліміту."""
+        items = [s for s in self.get_recent() if s != source]
+        items.insert(0, source)
+        self.settings.setValue("recent", items[:RECENT_LIMIT])
+        self.refresh_recent()
+
+    def refresh_recent(self):
+        """Перемальовує список; якщо він порожній — показує напис-заглушку."""
+        items = self.get_recent()
+        self.recent_list.clear()
+        for source in items:
+            item = QListWidgetItem(icon("heart"), source_title(source))
+            item.setData(Qt.UserRole, source)  # справжній шлях/посилання
+            item.setToolTip(source)
+            self.recent_list.addItem(item)
+        self.recent_list.setVisible(bool(items))
+        self.recent_empty.setVisible(not items)
+
+    def play_recent(self, item):
+        source = item.data(Qt.UserRole)
+        # Локальний файл могли видалити чи перемістити — тоді прибираємо його зі списку
+        if not is_url(source) and not Path(source).exists():
+            QMessageBox.warning(self, "Файл не знайдено", source)
+            self.settings.setValue(
+                "recent", [s for s in self.get_recent() if s != source]
+            )
+            self.refresh_recent()
+            return
+        self.play_source(source)
 
     def toggle_play(self):
         if self.player.playbackState() == QMediaPlayer.PlayingState:

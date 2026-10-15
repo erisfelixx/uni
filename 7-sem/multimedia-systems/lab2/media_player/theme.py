@@ -61,6 +61,13 @@ QLineEdit {
 }
 QLineEdit:focus { border-color: #B58BE0; }
 
+QListWidget#recent { background: transparent; border: none; outline: 0; color: #5A3E8E; }
+QListWidget#recent::item {
+    padding: 6px 4px; border-bottom: 2px dashed #D3B3EE;
+}
+QListWidget#recent::item:hover { background: #F5E8FB; }
+QListWidget#recent::item:selected { background: #EBD9F7; color: #4B3B7A; }
+
 QSlider::groove:horizontal {
     height: 8px; background: #E3D2F3;
     border: 2px solid #C9A8EA; border-radius: 6px;

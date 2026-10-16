@@ -1,15 +1,12 @@
-"""Оформлення плеєра: шляхи до ресурсів, стилі (QSS), іконки, шрифт.
-Тут лише дизайн — логіка відтворення живе в player.py."""
+"""Оформлення плеєра: шляхи до ресурсів, стилі (QSS), іконки, шрифт."""
 from pathlib import Path
 from PySide6.QtGui import QFont, QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication
 
-# Шляхи до ресурсів дизайну (відносно цього файлу, щоб працювало з будь-якої папки)
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
 FONTS_DIR = BASE_DIR / "fonts"
 
-# Таблиця стилів (QSS) — це "CSS для Qt". @ASSETS@ підміняється на справжній шлях.
 STYLE = """
 QLabel { color: #5A3E8E; }
 
@@ -93,12 +90,12 @@ QSlider#volume::handle:horizontal {
 
 
 def icon(name):
-    """Завантажує піксельну іконку з assets/icons/<name>.png."""
+    """Піксельні іконки з assets/icons/<name>.png."""
     return QIcon(str(ASSETS_DIR / "icons" / f"{name}.png"))
 
 
 def load_pixel_font():
-    """Підключає піксельний шрифт із папки fonts/. Якщо файлу немає — лишається системний."""
+    """Якщо проблеми з відображанням шрифту - то буде системний."""
     for path in sorted(FONTS_DIR.glob("*.ttf")):
         font_id = QFontDatabase.addApplicationFont(str(path))
         if font_id != -1:

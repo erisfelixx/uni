@@ -39,7 +39,7 @@ class MediaPlayer(QWidget):
         self.resize(980, 620)
         self.setStyleSheet(STYLE)
 
-        # Піксельний фон вікна (малюється у paintEvent)
+        # Піксельний фон вікна (у paintEvent)
         self.bg_pixmap = QPixmap(str(ASSETS_DIR / "bg.png"))
 
         # Рушій відтворення, вихід звуку, екран для відео
@@ -50,7 +50,7 @@ class MediaPlayer(QWidget):
         self.player.setVideoOutput(self.video_widget)
         self.audio_output.setVolume(0.7)
 
-        # Кнопки (тепер із піксельними іконками замість тексту)
+        # Кнопки
         self.open_btn = QPushButton(" Відкрити файл")
         self.open_btn.setIcon(icon("folder"))
         self.back_btn = QPushButton()
@@ -126,7 +126,7 @@ class MediaPlayer(QWidget):
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
 
         # Розташування
-        # Екран для відео в рамці (рамка — з QSS, відео розтягується по рамці)
+        # Екран для відео в рамці (рамка з QSS, і відео розтягується по рамці)
         screen_frame = QFrame()
         screen_frame.setObjectName("screen")
         screen_layout = QVBoxLayout(screen_frame)

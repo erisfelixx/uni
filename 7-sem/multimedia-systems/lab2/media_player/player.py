@@ -23,8 +23,12 @@ def format_time(ms):
 
 
 def is_url(source):
-    """True, якщо джерело — посилання, а не шлях до локального файлу."""
-    return source.startswith(("http://", "https://"))
+    """True, якщо джерело — посилання, а не шлях до локального файлу.
+
+    Схема URL за стандартом нечутлива до регістру, тому HTTP:// і http://
+    мають розпізнаватися однаково — порівнюємо рядок у нижньому регістрі.
+    """
+    return source.lower().startswith(("http://", "https://"))
 
 
 def source_title(source):
@@ -39,7 +43,7 @@ class MediaPlayer(QWidget):
         self.resize(980, 620)
         self.setStyleSheet(STYLE)
 
-        # Піксельний фон вікна (у paintEvent)
+        # Піксельний фон вікна (малюється у paintEvent)
         self.bg_pixmap = QPixmap(str(ASSETS_DIR / "bg.png"))
 
         # Рушій відтворення, вихід звуку, екран для відео
@@ -50,7 +54,7 @@ class MediaPlayer(QWidget):
         self.player.setVideoOutput(self.video_widget)
         self.audio_output.setVolume(0.7)
 
-        # Кнопки
+        # Кнопки (тепер із піксельними іконками замість тексту)
         self.open_btn = QPushButton(" Відкрити файл")
         self.open_btn.setIcon(icon("folder"))
         self.back_btn = QPushButton()
@@ -74,8 +78,17 @@ class MediaPlayer(QWidget):
 
         # Прогрес-бар і мітки часу
         self.position_slider = QSlider(Qt.Horizontal)
+        # Прапорець: True, поки позицію повзунка оновлює сам плеєр, а не користувач
+        self._syncing_slider = False
         self.current_label = QLabel("00:00")
         self.total_label = QLabel("00:00")
+
+        # Фіксуємо ширину міток часу за найдовшим можливим текстом, щоб зміна
+        # цифр не зміщувала шкалу відтворення
+        time_width = self.current_label.fontMetrics().horizontalAdvance("000:00")
+        for label in (self.current_label, self.total_label):
+            label.setFixedWidth(time_width)
+            label.setAlignment(Qt.AlignCenter)
 
         # Назва поточного файлу
         self.title_label = QLabel("Не вибрано файл")
@@ -122,11 +135,13 @@ class MediaPlayer(QWidget):
         self.player.durationChanged.connect(self.on_duration_changed)
         self.player.playbackStateChanged.connect(self.on_state_changed)
         self.player.errorOccurred.connect(self.on_error)
-        self.position_slider.sliderMoved.connect(self.player.setPosition)
+        # valueChanged охоплює всі способи зміни: перетягування, клік по шкалі
+        # та керування з клавіатури (стрілки, PageUp/PageDown, Home/End)
+        self.position_slider.valueChanged.connect(self.on_slider_value_changed)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
 
         # Розташування
-        # Екран для відео в рамці (рамка з QSS, і відео розтягується по рамці)
+        # Екран для відео в рамці (рамка — з QSS, відео розтягується по рамці)
         screen_frame = QFrame()
         screen_frame.setObjectName("screen")
         screen_layout = QVBoxLayout(screen_frame)
@@ -328,13 +343,27 @@ class MediaPlayer(QWidget):
         new_pos = self.player.position() + SEEK_STEP_MS
         self.player.setPosition(min(self.player.duration(), new_pos))
 
+    def on_slider_value_changed(self, value):
+        """Перемотує запис, коли повзунок рухав користувач.
+
+        Прапорець відрізняє зміну, зроблену користувачем, від оновлення,
+        яке програма робить сама за сигналом плеєра, — інакше плеєр
+        перемотував би себе у відповідь на власні ж повідомлення.
+        """
+        if not self._syncing_slider:
+            self.player.setPosition(value)
+
     def on_position_changed(self, position):
         if not self.position_slider.isSliderDown():
+            self._syncing_slider = True
             self.position_slider.setValue(position)
+            self._syncing_slider = False
         self.current_label.setText(format_time(position))
 
     def on_duration_changed(self, duration):
+        self._syncing_slider = True
         self.position_slider.setRange(0, duration)
+        self._syncing_slider = False
         self.total_label.setText(format_time(duration))
 
     def on_volume_changed(self, value):

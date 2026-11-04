@@ -41,15 +41,77 @@
 ### Схема зв'язків
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#FFF4E6', 'primaryBorderColor': '#C05621',
+  'primaryTextColor': '#2D3748', 'lineColor': '#C05621',
+  'secondaryColor': '#FFFAF0', 'tertiaryColor': '#FFFFFF'
+}}}%%
 erDiagram
-    categories ||--o{ materials : "містить"
-    materials ||--o{ material_authors : ""
-    authors ||--o{ material_authors : ""
-    materials ||--o{ publication_files : "має файли"
-    materials ||--o{ reviews : "отримує"
-    readers ||--o{ reviews : "пише"
-    materials ||--o{ material_views : "переглядається"
-    readers |o--o{ material_views : "переглядає"
+    categories {
+        int id PK
+        varchar name UK
+        text description
+    }
+    materials {
+        int id PK
+        varchar title
+        varchar kind "article | graphic"
+        text annotation
+        int category_id FK
+        date published_on
+        varchar status "draft | published | archived"
+    }
+    authors {
+        int id PK
+        varchar full_name
+        varchar email UK
+        varchar status "student | teacher | staff"
+        varchar unit
+    }
+    material_authors {
+        int id PK
+        int material_id FK
+        int author_id FK
+        varchar role
+    }
+    publication_files {
+        int id PK
+        int material_id FK
+        varchar file_path
+        varchar file_format
+        int size_kb
+        date uploaded_on
+    }
+    readers {
+        int id PK
+        varchar full_name
+        varchar email UK
+        varchar academic_group
+        date registered_on
+    }
+    reviews {
+        int id PK
+        int material_id FK
+        int reader_id FK
+        int rating "1..5"
+        text comment
+        date created_on
+    }
+    material_views {
+        int id PK
+        int material_id FK
+        int reader_id FK "NULL = анонімний"
+        datetime viewed_at
+    }
+
+    categories        ||--o{ materials         : "рубрика"
+    materials         ||--o{ material_authors  : "має авторів"
+    authors           ||--o{ material_authors  : "є автором"
+    materials         ||--o{ publication_files : "файли"
+    materials         ||--o{ reviews           : "відгуки"
+    readers           ||--o{ reviews           : "пише"
+    materials         ||--o{ material_views    : "перегляди"
+    readers           |o--o{ material_views    : "переглядає"
 ```
 
 ### Проєктні рішення

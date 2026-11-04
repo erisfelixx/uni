@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .DS_Store
 /6-sem/3d/seminar67/assets/models/globe-string-lig_dafbd916-50a6-46de-9852-0acb77422801/
+dist-newstyle/

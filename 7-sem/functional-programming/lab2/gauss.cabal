@@ -1,0 +1,19 @@
+cabal-version:      3.0
+name:               gauss
+version:            0.1.0.0
+synopsis:           Parallel Gaussian elimination (multithreaded Haskell)
+build-type:         Simple
+
+executable gauss
+    main-is:          Main.hs
+    hs-source-dirs:   app
+    build-depends:    base >=4 && <5
+                    , array
+                    , directory
+                    , filepath
+    default-language: GHC2021
+    -- -threaded    : багатопотоковий runtime
+    -- -O2          : оптимізація обчислень
+    -- -rtsopts     : дозволяє змінювати параметри runtime (+RTS -N4)
+    -- -with-rtsopts=-N : за замовчуванням використовувати всі ядра
+    ghc-options:      -Wall -O2 -threaded -rtsopts "-with-rtsopts=-N"

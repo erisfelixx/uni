@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timezone
 
 import pika
+from prometheus_client import Counter, Gauge, start_http_server
 
 
 # Налаштування з docker-compose через змінні середовища
@@ -21,9 +22,23 @@ RABBIT_PASS = os.getenv("RABBIT_PASS", "guest")
 EXCHANGE = "delivery"          # direct-обмінник
 ROUTING_KEY = "order_events"   # ключ маршрутизації
 QUEUE = "order_events"         # черга, яку слухає worker
+METRICS_PORT = 8000            # порт, з якого Prometheus забирає метрики (/metrics)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [producer] %(message)s")
 log = logging.getLogger()
+
+
+# Метрики Prometheus
+
+EVENTS_PUBLISHED = Counter(
+    "delivery_events_published_total",
+    "Кількість подій, надісланих у RabbitMQ",
+    ["event", "status"],
+)
+ORDERS_IN_PROGRESS = Gauge(
+    "delivery_orders_in_progress",
+    "Кількість незавершених замовлень у диспетчерській",
+)
 
 # Довідникові дані для генерації
 CUSTOMERS = ["Іван", "Олена", "Петро", "Софія", "Максим", "Анна", "Богдан", "Катерина"]
@@ -71,6 +86,7 @@ def publish(ch, event):
         body=json.dumps(event, ensure_ascii=False),
         properties=pika.BasicProperties(content_type="application/json", delivery_mode=2),
     )
+    EVENTS_PUBLISHED.labels(event=event["event"], status=event["status"]).inc()
     log.info("Published %s order=%s status=%s", event["event"], event["order_id"][:8], event["status"])
 
 
@@ -89,6 +105,10 @@ def new_order():
 
 
 def main():
+    # HTTP-сервер з метриками у фоновому потоці: http://<host>:8000/metrics
+    start_http_server(METRICS_PORT)
+    log.info("Metrics available on port %s", METRICS_PORT)
+
     conn, ch = connect()
     # Активні замовлення: order_id -> {"status", "courier_id", "next_at"}
     active = {}
@@ -131,6 +151,8 @@ def main():
             else:
                 st["status"] = new_status
                 st["next_at"] = time.time() + random.uniform(3, 15)
+
+        ORDERS_IN_PROGRESS.set(len(active))
 
         # conn.sleep (не time.sleep!), щоб pika обробляв heartbeat під час паузи
         conn.sleep(1)

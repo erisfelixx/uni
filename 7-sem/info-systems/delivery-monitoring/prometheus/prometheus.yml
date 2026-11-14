@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 10s       # задаємо як часто опитувати цілі
+  evaluation_interval: 10s   # як часто перераховувати правила
+
+scrape_configs:
+  # Prometheus, власне
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Метрики СУБД PostgreSQL (через postgres-exporter)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Метрики брокера RabbitMQ (плагін rabbitmq_prometheus)
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+
+  # Власні метрики сервісів (prometheus_client у пайтон)
+  - job_name: 'producer'
+    static_configs:
+      - targets: ['producer:8000']
+
+  - job_name: 'worker'
+    static_configs:
+      - targets: ['worker:8000']

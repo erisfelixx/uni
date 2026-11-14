@@ -21,7 +21,7 @@ services:
     networks:
       - delivery-net
 
-  # Брокер повідомлень RabbitMQ (веб-інтерфейс http://localhost:15672)
+  # Брокер повідомлень RabbitMQ (веб-інтерфейс: http://localhost:15672)
   rabbitmq:
     image: rabbitmq:4.0-management
     container_name: rabbitmq
@@ -32,6 +32,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "15692:15692"   # метрики для Prometheus (плагін rabbitmq_prometheus)
     volumes:
       - rabbit_data:/var/lib/rabbitmq
     healthcheck:
@@ -47,6 +48,8 @@ services:
   producer:
     build: ./producer
     container_name: producer
+    ports:
+      - "8001:8000"     # метрики: http://localhost:8001/metrics
     environment:
       RABBIT_HOST: rabbitmq
       RABBIT_USER: admin
@@ -62,6 +65,8 @@ services:
   worker:
     build: ./worker
     container_name: worker
+    ports:
+      - "8002:8000"     # метрики: http://localhost:8002/metrics
     environment:
       RABBIT_HOST: rabbitmq
       RABBIT_USER: admin
@@ -76,9 +81,43 @@ services:
     networks:
       - delivery-net
 
+  # Експортер метрик PostgreSQL для Prometheus
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.16.0
+    container_name: postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: postgresql://delivery:delivery@postgres:5432/delivery?sslmode=disable
+    ports:
+      - "9187:9187"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
+  # Prometheus — збір і зберігання метрик (http://localhost:9090)
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prom_data:/prometheus          # вбудована БД часових рядів (TSDB)
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'       # дозволяє перечитати конфіг без перезапуску
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
 volumes:
   pg_data:
   rabbit_data:
+  prom_data:
 
 networks:
   delivery-net:

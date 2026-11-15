@@ -1,0 +1,11 @@
+# Звідки Grafana автоматично завантажує дашборди
+apiVersion: 1
+
+providers:
+  - name: delivery
+    folder: Delivery             # папка в інтерфейсі
+    type: file
+    allowUiUpdates: true         # дозволяє редагувати дашборд в інтерфейсі
+    updateIntervalSeconds: 30    # як часто перечитувати файли
+    options:
+      path: /etc/grafana/dashboards

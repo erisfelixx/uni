@@ -1,0 +1,11 @@
+# Джерела даних, які Grafana підключає при старті
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus              # фіксований id
+    access: proxy                # запити йдуть через сервер Grafana
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false

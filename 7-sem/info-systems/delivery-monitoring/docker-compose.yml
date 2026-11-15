@@ -114,11 +114,32 @@ services:
     networks:
       - delivery-net
 
+  # Grafana — візуалізація (http://localhost:3000)
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"            # заборона самостійної реєстрації
+    volumes:
+      - grafana_data:/var/lib/grafana                          # внутрішня БД Grafana (користувачі, налаштування)
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro     # автопідключення джерел даних і дашбордів
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro         # JSON-файли дашбордів
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
 volumes:
   pg_data:
   rabbit_data:
   prom_data:
-
+  grafana_data:
+  
 networks:
   delivery-net:
     driver: bridge

@@ -1,0 +1,55 @@
+// Grafana Alloy — це агент, який збирає логи контейнерів Docker і відправляє їх у Loki
+
+// 1. Знаходимо контейнери лише нашого проєкту (тобт за міткою docker compose)
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.project=delivery-monitoring"]
+  }
+}
+
+// 2. Правила перейменування міток: службові мітки Docker -> зрозумілі мітки в Loki
+discovery.relabel "containers" {
+  targets = []
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+}
+
+// 3. Читаємо логи (stdout/stderr) знайдених контейнерів
+loki.source.docker "containers" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.containers.targets
+  relabel_rules = discovery.relabel.containers.rules
+  forward_to    = [loki.process.levels.receiver]
+}
+
+// 4. Витягуємо рівень логу (INFO / WARNING / ERROR) у окрему мітку level
+loki.process "levels" {
+  stage.regex {
+    expression = "\\s(?P<level>DEBUG|INFO|WARNING|ERROR|CRITICAL)\\s"
+  }
+
+  stage.labels {
+    values = { level = "" }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+// 5. Відправляємо логи в Loki
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

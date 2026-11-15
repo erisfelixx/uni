@@ -26,3 +26,12 @@ scrape_configs:
   - job_name: 'worker'
     static_configs:
       - targets: ['worker:8000']
+
+  # Моніторинг самої системи логування
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+
+  - job_name: 'alloy'
+    static_configs:
+      - targets: ['alloy:12345']

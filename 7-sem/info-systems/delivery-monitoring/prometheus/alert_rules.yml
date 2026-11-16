@@ -1,0 +1,75 @@
+# Правила алертів: Prometheus кожні evaluation_interval (10 с) перевіряє умови.
+# Якщо умова (expr) виконується довше ніж "for" — алерт переходить у стан FIRING і надсилається в Alertmanager.
+
+groups:
+  #  Доступність сервісів 
+  - name: services
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сервіс {{ $labels.job }} недоступний"
+          description: "Prometheus не може отримати метрики з {{ $labels.instance }} понад 30 с."
+
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL недоступна"
+          description: "postgres-exporter працює, але не може підключитися до БД."
+
+  #  Робота з БД і обробка подій 
+  - name: database
+    rules:
+      - alert: SlowDBQueries
+        expr: histogram_quantile(0.95, sum by (le, operation) (rate(delivery_db_query_duration_seconds_bucket{operation!="stats"}[5m]))) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Повільні запити до БД ({{ $labels.operation }})"
+          description: "95% запитів {{ $labels.operation }} виконуються довше {{ $value | humanizeDuration }} (поріг 100 мс)."
+
+      - alert: EventProcessingErrors
+        expr: sum(increase(delivery_events_failed_total[5m])) > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Помилки обробки подій"
+          description: "За останні 5 хв worker не зміг записати в БД {{ $value | printf \"%.0f\" }} подій."
+
+      - alert: RabbitMQQueueBacklog
+        expr: sum(rabbitmq_queue_messages_ready) > 50
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Черга RabbitMQ накопичується"
+          description: "У черзі {{ $value | printf \"%.0f\" }} необроблених повідомлень — worker не встигає або зупинений."
+
+  #  Бізнес-показники служби доставки
+  - name: business
+    rules:
+      - alert: AllCouriersBusy
+        expr: delivery_couriers_busy >= 10
+        for: 2m
+        labels:
+          severity: info
+        annotations:
+          summary: "Усі кур'єри зайняті"
+          description: "Понад 2 хв немає жодного вільного кур'єра — година пік."
+
+      - alert: OrdersWaitingForCourier
+        expr: delivery_orders_by_status{status="created"} > 10
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Замовлення чекають на кур'єра"
+          description: "{{ $value | printf \"%.0f\" }} замовлень очікують призначення кур'єра."

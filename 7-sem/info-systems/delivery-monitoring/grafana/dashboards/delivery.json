@@ -121,7 +121,7 @@
       "panels": [],
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 11,
         "w": 24,
         "h": 1
       }
@@ -136,7 +136,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 5,
+        "y": 12,
         "w": 4,
         "h": 4
       },
@@ -195,7 +195,7 @@
       },
       "gridPos": {
         "x": 4,
-        "y": 5,
+        "y": 12,
         "w": 4,
         "h": 4
       },
@@ -261,7 +261,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 5,
+        "y": 12,
         "w": 4,
         "h": 4
       },
@@ -319,7 +319,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 5,
+        "y": 12,
         "w": 4,
         "h": 4
       },
@@ -377,7 +377,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 5,
+        "y": 12,
         "w": 4,
         "h": 4
       },
@@ -442,7 +442,7 @@
       },
       "gridPos": {
         "x": 20,
-        "y": 5,
+        "y": 12,
         "w": 4,
         "h": 4
       },
@@ -502,7 +502,7 @@
       "panels": [],
       "gridPos": {
         "x": 0,
-        "y": 9,
+        "y": 16,
         "w": 24,
         "h": 1
       }
@@ -517,7 +517,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 10,
+        "y": 17,
         "w": 12,
         "h": 8
       },
@@ -579,7 +579,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 10,
+        "y": 17,
         "w": 12,
         "h": 8
       },
@@ -641,7 +641,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 18,
+        "y": 25,
         "w": 12,
         "h": 8
       },
@@ -698,7 +698,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 18,
+        "y": 25,
         "w": 12,
         "h": 8
       },
@@ -768,7 +768,7 @@
       "panels": [],
       "gridPos": {
         "x": 0,
-        "y": 26,
+        "y": 33,
         "w": 24,
         "h": 1
       }
@@ -783,7 +783,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 27,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -854,7 +854,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 27,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -925,7 +925,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 27,
+        "y": 34,
         "w": 8,
         "h": 8
       },
@@ -985,7 +985,7 @@
       "panels": [],
       "gridPos": {
         "x": 0,
-        "y": 35,
+        "y": 42,
         "w": 24,
         "h": 1
       }
@@ -1000,7 +1000,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 36,
+        "y": 43,
         "w": 8,
         "h": 8
       },
@@ -1064,7 +1064,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 36,
+        "y": 43,
         "w": 16,
         "h": 8
       },
@@ -1116,7 +1116,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 44,
+        "y": 51,
         "w": 24,
         "h": 6
       },
@@ -1167,7 +1167,7 @@
       "panels": [],
       "gridPos": {
         "x": 0,
-        "y": 50,
+        "y": 57,
         "w": 24,
         "h": 1
       }
@@ -1182,7 +1182,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 51,
+        "y": 58,
         "w": 12,
         "h": 10
       },
@@ -1227,7 +1227,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 51,
+        "y": 58,
         "w": 12,
         "h": 10
       },
@@ -1290,7 +1290,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 61,
+        "y": 68,
         "w": 24,
         "h": 9
       },
@@ -1327,6 +1327,130 @@
       },
       "options": {},
       "description": "Клацни по Trace ID, щоб відкрити трейс: publish -> process -> запити до БД"
+    },
+    {
+      "id": 27,
+      "type": "row",
+      "title": "Активні алерти",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 1
+      }
+    },
+    {
+      "id": 28,
+      "title": "Алерти, що спрацювали зараз",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "refId": "A",
+          "expr": "ALERTS{alertstate=\"firing\"}",
+          "instant": true,
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "noValue": "Активних алертів немає"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Важливість"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "critical": {
+                        "color": "red",
+                        "index": 0
+                      },
+                      "warning": {
+                        "color": "orange",
+                        "index": 1
+                      },
+                      "info": {
+                        "color": "blue",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {},
+      "description": "Дані з Prometheus (серія ALERTS). Повний список і керування — в Alertmanager: http://localhost:9093",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "alertstate": true
+            },
+            "indexByName": {
+              "severity": 0,
+              "alertname": 1,
+              "job": 2,
+              "instance": 3
+            },
+            "renameByName": {
+              "severity": "Важливість",
+              "alertname": "Алерт",
+              "job": "Сервіс",
+              "instance": "Ціль",
+              "operation": "Операція"
+            }
+          }
+        }
+      ]
     }
   ]
 }

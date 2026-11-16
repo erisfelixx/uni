@@ -1,0 +1,32 @@
+# Alertmanager: отримує алерти від Prometheus, групує їх, прибирає дублікати і надсилає сповіщення отримувачам (receivers).
+
+route:
+  receiver: alert-receiver           # отримувач за замовчуванням
+  group_by: ['alertname', 'severity'] # однакові алерти об'єднуються в одне сповіщення
+  group_wait: 10s                    # скільки чекати перед першим сповіщенням групи
+  group_interval: 1m                 # як часто надсилати оновлення групи
+  repeat_interval: 1h                # повторне нагадування, якщо алерт не зник
+  routes:
+    - matchers: ['severity="critical"']
+      receiver: alert-receiver
+      repeat_interval: 10m           # критичні — нагадувати частіше
+
+receivers:
+  - name: alert-receiver
+    webhook_configs:
+      - url: http://alert-receiver:5001/alerts
+        send_resolved: true          # повідомляти також, коли проблема зникла
+
+    # Приклад надсилання на пошту:
+    # email_configs:
+    #   - to: 'your_email@gmail.com'
+    #     from: 'your_email@gmail.com'
+    #     smarthost: 'smtp.gmail.com:587'
+    #     auth_username: 'your_email@gmail.com'
+    #     auth_password: 'app_password'
+    #     send_resolved: true
+
+# Придушення: якщо БД недоступна, не засмічувати сповіщеннями-наслідками
+inhibit_rules:
+  - source_matchers: ['alertname="PostgresDown"']
+    target_matchers: ['alertname=~"SlowDBQueries|EventProcessingErrors|RabbitMQQueueBacklog"']

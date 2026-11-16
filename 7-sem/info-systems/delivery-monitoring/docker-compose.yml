@@ -104,6 +104,7 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro   # правила алертів
       - prom_data:/prometheus          # вбудована БД часових рядів (TSDB)
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -113,6 +114,8 @@ services:
       - '--web.enable-remote-write-receiver'   # дозволяє Tempo записувати метрики, пораховані з трейсів
     ports:
       - "9090:9090"
+    depends_on:
+      - alertmanager
     restart: unless-stopped
     networks:
       - delivery-net
@@ -191,6 +194,32 @@ services:
     networks:
       - delivery-net
 
+  # Alertmanager — обробка алертів і розсилка сповіщень (http://localhost:9093)
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager   # стан алертів і "тиші" (silences)
+    ports:
+      - "9093:9093"
+    depends_on:
+      - alert-receiver
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
+  # Отримувач сповіщень (webhook): записує алерти в лог -> Loki -> Grafana
+  alert-receiver:
+    build: ./alert-receiver
+    container_name: alert-receiver
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
 volumes:
   pg_data:
   rabbit_data:
@@ -199,6 +228,7 @@ volumes:
   loki_data:
   alloy_data:
   tempo_data:
+  alertmanager_data:
 
 networks:
   delivery-net:

@@ -3,18 +3,25 @@ Worker (обробник подій).
 Отримує події з RabbitMQ і записує їх у PostgreSQL:
  - order_created  -> нове замовлення в orders + запис в order_events
  - status_changed -> оновлення статусу в orders + запис в order_events
-Додатково віддає метрики роботи з БД для Prometheus.
+Додатково віддає метрики роботи з БД для Prometheus і трейси для Tempo.
 """
 import json
 import logging
 import os
 import threading
 import time
+from contextlib import contextmanager
 from datetime import datetime
 
 import pika
 import psycopg
 from prometheus_client import Counter, Gauge, Histogram, start_http_server
+from opentelemetry import propagate, trace
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.trace import Status, StatusCode
 
 
 # Налаштування
@@ -28,11 +35,13 @@ QUEUE = "order_events"
 DB_DSN = os.getenv("DB_DSN", "postgresql://delivery:delivery@localhost:5432/delivery")
 METRICS_PORT = 8000            # порт для Prometheus (/metrics)
 STATS_INTERVAL = 10            # як часто (с) рахувати статистику по таблицях
+OTLP_ENDPOINT = os.getenv("OTLP_ENDPOINT", "http://localhost:4318/v1/traces")  # куди надсилати трейси (Tempo)
 
 ALL_STATUSES = ["created", "assigned", "picked_up", "in_transit", "delivered", "canceled"]
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [worker] %(message)s")
 log = logging.getLogger()
+tracer = trace.get_tracer("worker")     # створює спани (кроки трейсу)
 
 
 # Метрики Prometheus
@@ -70,6 +79,29 @@ COURIERS_BUSY = Gauge(
 )
 
 
+def setup_tracing(service_name):
+    """Налаштування OpenTelemetry: спани збираються пачками й відправляються в Tempo по OTLP/HTTP."""
+    provider = TracerProvider(resource=Resource.create({"service.name": service_name}))
+    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=OTLP_ENDPOINT)))
+    trace.set_tracer_provider(provider)
+
+
+def trace_id_hex(span):
+    """trace_id у звичному вигляді (32 hex-символи) — для логів, щоб зв'язати лог із трейсом."""
+    return format(span.get_span_context().trace_id, "032x")
+
+
+@contextmanager
+def db_operation(operation, statement):
+    """Обгортка для операції з БД: одночасно спан у трейсі (Tempo) і замір тривалості (Prometheus)."""
+    with tracer.start_as_current_span(f"db {operation}", kind=trace.SpanKind.CLIENT) as span:
+        span.set_attribute("db.system", "postgresql")
+        span.set_attribute("db.operation", operation)
+        span.set_attribute("db.statement", statement)
+        with DB_QUERY_DURATION.labels(operation=operation).time():
+            yield
+
+
 def connect_db():
     """Підключення до PostgreSQL з повторними спробами."""
     while True:
@@ -103,9 +135,9 @@ def connect_rabbit():
 
 def save_event(db, ev):
     """Запис події в БД. Одна транзакція - або все записано, або нічого."""
-    with db.transaction():
+    with tracer.start_as_current_span("db transaction", kind=trace.SpanKind.CLIENT), db.transaction():
         if ev["event"] == "order_created":
-            with DB_QUERY_DURATION.labels(operation="insert_order").time():
+            with db_operation("insert_order", "INSERT INTO orders ... ON CONFLICT DO NOTHING"):
                 db.execute(
                     """INSERT INTO orders (id, customer, district, address, price, status, created_at, updated_at)
                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -114,7 +146,7 @@ def save_event(db, ev):
                      ev["price"], ev["status"], ev["ts"], ev["ts"]),
                 )
         else:  # status_changed
-            with DB_QUERY_DURATION.labels(operation="update_status").time():
+            with db_operation("update_status", "UPDATE orders SET status ... RETURNING price, created_at"):
                 row = db.execute(
                     """UPDATE orders
                        SET status = %s,
@@ -132,7 +164,7 @@ def save_event(db, ev):
                 DELIVERY_DURATION.observe(duration)
                 REVENUE.inc(float(price))
         # Історія змін
-        with DB_QUERY_DURATION.labels(operation="insert_event").time():
+        with db_operation("insert_event", "INSERT INTO order_events ..."):
             db.execute(
                 "INSERT INTO order_events (order_id, status, courier_id, event_time) VALUES (%s, %s, %s, %s)",
                 (ev["order_id"], ev["status"], ev.get("courier_id"), ev["ts"]),
@@ -145,7 +177,7 @@ def collect_db_stats():
     db = connect_db()
     while True:
         try:
-            with DB_QUERY_DURATION.labels(operation="stats").time():
+            with db_operation("stats", "SELECT status, count(*) FROM orders GROUP BY status"):
                 counts = dict(db.execute("SELECT status, count(*) FROM orders GROUP BY status").fetchall())
                 busy = db.execute(
                     """SELECT count(DISTINCT courier_id) FROM orders
@@ -164,23 +196,33 @@ def main():
     # HTTP-сервер з метриками у фоновому потоці: http://<host>:8000/metrics
     start_http_server(METRICS_PORT)
     log.info("Metrics available on port %s", METRICS_PORT)
+    setup_tracing("worker")
     threading.Thread(target=collect_db_stats, daemon=True).start()
 
     db = connect_db()
     conn, ch = connect_rabbit()
 
     def on_message(channel, method, properties, body):
-        try:
-            ev = json.loads(body)
-            save_event(db, ev)
-            channel.basic_ack(delivery_tag=method.delivery_tag)  # підтверджуємо обробку
-            EVENTS_PROCESSED.labels(event=ev["event"], status=ev["status"]).inc()
-            log.info("Saved %s order=%s status=%s", ev["event"], ev["order_id"][:8], ev["status"])
-        except Exception as e:
-            # Помилка: відхиляємо повідомлення без повернення в чергу, щоб не зациклитись
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-            EVENTS_FAILED.inc()
-            log.error("Failed to process message: %s", e)
+        # Відновлюємо контекст трейсу з заголовків повідомлення -> спан worker'а стає продовженням трейсу producer'а
+        parent_ctx = propagate.extract(properties.headers or {})
+        with tracer.start_as_current_span("process order_event", context=parent_ctx,
+                                          kind=trace.SpanKind.CONSUMER) as span:
+            try:
+                ev = json.loads(body)
+                span.set_attribute("order.id", ev["order_id"])
+                span.set_attribute("order.status", ev["status"])
+                save_event(db, ev)
+                channel.basic_ack(delivery_tag=method.delivery_tag)  # підтверджуємо обробку
+                EVENTS_PROCESSED.labels(event=ev["event"], status=ev["status"]).inc()
+                log.info("Saved %s order=%s status=%s trace_id=%s",
+                         ev["event"], ev["order_id"][:8], ev["status"], trace_id_hex(span))
+            except Exception as e:
+                # Помилка: відхиляємо повідомлення без повернення в чергу, щоб не зациклитись
+                channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+                EVENTS_FAILED.inc()
+                span.record_exception(e)                 # помилка буде видна в трейсі
+                span.set_status(Status(StatusCode.ERROR))
+                log.error("Failed to process message: %s trace_id=%s", e, trace_id_hex(span))
 
     ch.basic_consume(queue=QUEUE, on_message_callback=on_message)
     log.info("Waiting for messages...")

@@ -54,6 +54,7 @@ services:
       RABBIT_HOST: rabbitmq
       RABBIT_USER: admin
       RABBIT_PASS: admin
+      OTLP_ENDPOINT: http://tempo:4318/v1/traces   # куди надсилати трейси
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -72,6 +73,7 @@ services:
       RABBIT_USER: admin
       RABBIT_PASS: admin
       DB_DSN: postgresql://delivery:delivery@postgres:5432/delivery
+      OTLP_ENDPOINT: http://tempo:4318/v1/traces   # куди надсилати трейси
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -108,6 +110,7 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=15d'
       - '--web.enable-lifecycle'       # дозволяє перечитати конфіг без перезапуску
+      - '--web.enable-remote-write-receiver'   # дозволяє Tempo записувати метрики, пораховані з трейсів
     ports:
       - "9090:9090"
     restart: unless-stopped
@@ -131,6 +134,7 @@ services:
     depends_on:
       - prometheus
       - loki
+      - tempo
     restart: unless-stopped
     networks:
       - delivery-net
@@ -170,6 +174,23 @@ services:
     networks:
       - delivery-net
 
+  # Tempo — сховище трейсів (API: http://localhost:3200)
+  tempo:
+    image: grafana/tempo:2.6.1
+    container_name: tempo
+    user: root                         # потрібен доступ на запис до тому /var/tempo
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo_data:/var/tempo          # збережені трейси
+    ports:
+      - "3200:3200"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
 volumes:
   pg_data:
   rabbit_data:
@@ -177,6 +198,7 @@ volumes:
   grafana_data:
   loki_data:
   alloy_data:
+  tempo_data:
 
 networks:
   delivery-net:

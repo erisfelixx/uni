@@ -1,10 +1,10 @@
-# Джерела даних, які Grafana підключає при старті
+# Джерела даних, які Grafana підключає автоматично при старті
 apiVersion: 1
 
 datasources:
   - name: Prometheus
     type: prometheus
-    uid: prometheus              # фіксований id
+    uid: prometheus              # фіксований id — на нього посилаються дашборди
     access: proxy                # запити йдуть через сервер Grafana
     url: http://prometheus:9090
     isDefault: true
@@ -16,3 +16,32 @@ datasources:
     access: proxy
     url: http://loki:3100
     editable: false
+    jsonData:
+      # У рядку логу знаходимо trace_id=... і робимо з нього посилання на трейс у Tempo
+      derivedFields:
+        - name: TraceID
+          matcherRegex: 'trace_id=(\w+)'
+          url: '$${__value.raw}'
+          datasourceUid: tempo
+
+  - name: Tempo
+    type: tempo
+    uid: tempo                   # фіксований id — на нього посилаються панелі трейсів
+    access: proxy
+    url: http://tempo:3200
+    editable: false
+    jsonData:
+      # Зі спану трейсу — перехід до логів цього ж трейсу в Loki
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: '-1m'
+        spanEndTimeShift: '1m'
+        filterByTraceID: true
+        tags:
+          - key: service.name
+            value: service
+      # Граф сервісів будується з метрик, які Tempo записує в Prometheus
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true

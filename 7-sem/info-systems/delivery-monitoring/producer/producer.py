@@ -13,6 +13,11 @@ from datetime import datetime, timezone
 
 import pika
 from prometheus_client import Counter, Gauge, start_http_server
+from opentelemetry import propagate, trace
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
 # Налаштування з docker-compose через змінні середовища
@@ -24,9 +29,11 @@ EXCHANGE = "delivery"          # direct-обмінник
 ROUTING_KEY = "order_events"   # ключ маршрутизації
 QUEUE = "order_events"         # черга, яку слухає worker
 METRICS_PORT = 8000            # порт, з якого Prometheus забирає метрики (/metrics)
+OTLP_ENDPOINT = os.getenv("OTLP_ENDPOINT", "http://localhost:4318/v1/traces")  # куди надсилати трейси (Tempo)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [producer] %(message)s")
 log = logging.getLogger()
+tracer = trace.get_tracer("producer")   # створює спани (кроки трейсу)
 
 
 # Метрики Prometheus
@@ -62,6 +69,18 @@ NEXT_STATUS = {
 }
 
 
+def setup_tracing(service_name):
+    """Налаштування OpenTelemetry: спани збираються пачками й відправляються в Tempo по OTLP/HTTP."""
+    provider = TracerProvider(resource=Resource.create({"service.name": service_name}))
+    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=OTLP_ENDPOINT)))
+    trace.set_tracer_provider(provider)
+
+
+def trace_id_hex(span):
+    """trace_id у звичному вигляді (32 hex-символи) — для логів, щоб зв'язати лог із трейсом."""
+    return format(span.get_span_context().trace_id, "032x")
+
+
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
@@ -92,14 +111,25 @@ def connect():
 
 def publish(ch, event):
     """Надсилання події в RabbitMQ (delivery_mode=2 — повідомлення зберігається на диску)."""
-    ch.basic_publish(
-        exchange=EXCHANGE,
-        routing_key=ROUTING_KEY,
-        body=json.dumps(event, ensure_ascii=False),
-        properties=pika.BasicProperties(content_type="application/json", delivery_mode=2),
-    )
-    EVENTS_PUBLISHED.labels(event=event["event"], status=event["status"]).inc()
-    log.info("Published %s order=%s status=%s", event["event"], event["order_id"][:8], event["status"])
+    # Спан "publish" — початок трейсу; його контекст передається worker'у в заголовках повідомлення
+    with tracer.start_as_current_span(f"publish {event['event']}", kind=trace.SpanKind.PRODUCER) as span:
+        span.set_attribute("messaging.system", "rabbitmq")
+        span.set_attribute("messaging.destination.name", EXCHANGE)
+        span.set_attribute("order.id", event["order_id"])
+        span.set_attribute("order.status", event["status"])
+
+        headers = {}
+        propagate.inject(headers)   # додає заголовок traceparent (id трейсу + id поточного спану)
+
+        ch.basic_publish(
+            exchange=EXCHANGE,
+            routing_key=ROUTING_KEY,
+            body=json.dumps(event, ensure_ascii=False),
+            properties=pika.BasicProperties(content_type="application/json", delivery_mode=2, headers=headers),
+        )
+        EVENTS_PUBLISHED.labels(event=event["event"], status=event["status"]).inc()
+        log.info("Published %s order=%s status=%s trace_id=%s",
+                 event["event"], event["order_id"][:8], event["status"], trace_id_hex(span))
 
 
 def new_order():
@@ -120,6 +150,7 @@ def main():
     # HTTP-сервер з метриками у фоновому потоці: http://<host>:8000/metrics
     start_http_server(METRICS_PORT)
     log.info("Metrics available on port %s", METRICS_PORT)
+    setup_tracing("producer")
 
     conn, ch = connect()
     # Активні замовлення: order_id -> {"status", "courier_id", "next_at"}

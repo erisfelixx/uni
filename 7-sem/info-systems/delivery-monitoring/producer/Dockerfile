@@ -1,6 +1,7 @@
 FROM python:3.12-slim
 WORKDIR /app
-RUN pip install --no-cache-dir pika==1.3.2 prometheus-client==0.21.1
+RUN pip install --no-cache-dir pika==1.3.2 prometheus-client==0.21.1 \
+    opentelemetry-sdk==1.28.2 opentelemetry-exporter-otlp-proto-http==1.28.2
 COPY producer.py .
 # -u: виводити логи одразу
 CMD ["python", "-u", "producer.py"]

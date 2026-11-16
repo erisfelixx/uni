@@ -4,6 +4,7 @@ Producer - генератор подій служби доставки.
 """
 import json
 import logging
+import math
 import os
 import random
 import time
@@ -46,6 +47,12 @@ DISTRICTS = ["Центр", "Поділ", "Оболонь", "Печерськ", "
 STREETS = ["Хрещатик", "Шевченка", "Франка", "Лесі Українки", "Сагайдачного"]
 COURIERS = list(range(1, 11))  # id кур'єрів
 
+# Інтенсивність замовлень змінюється хвилями ("години пік"):
+# імовірність нового замовлення щосекунди коливається від 0.15 до 0.45 з періодом 10 хв
+BASE_ORDER_RATE = 0.30
+PEAK_AMPLITUDE = 0.15
+PEAK_PERIOD = 600              # секунд
+
 # Порядок статусів ("життєвий цикл" замовлення)
 NEXT_STATUS = {
     "created": "assigned",
@@ -57,6 +64,11 @@ NEXT_STATUS = {
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
+
+
+def order_probability():
+    """Імовірність появи нового замовлення в поточну секунду (синусоїда навколо BASE_ORDER_RATE)."""
+    return BASE_ORDER_RATE + PEAK_AMPLITUDE * math.sin(2 * math.pi * time.time() / PEAK_PERIOD)
 
 
 def connect():
@@ -112,10 +124,12 @@ def main():
     conn, ch = connect()
     # Активні замовлення: order_id -> {"status", "courier_id", "next_at"}
     active = {}
+    # Вільні кур'єри: замовлення призначається лише вільному, після доставки кур'єр звільняється
+    free_couriers = set(COURIERS)
 
     while True:
-        # 1) З імовірністю 60% кожну секунду з'являється нове замовлення
-        if random.random() < 0.6:
+        # 1) Кожну секунду з певною імовірністю (залежить від "години пік") з'являється нове замовлення
+        if random.random() < order_probability():
             order = new_order()
             publish(ch, order)
             active[order["order_id"]] = {
@@ -136,7 +150,12 @@ def main():
                 new_status = NEXT_STATUS[st["status"]]
 
             if new_status == "assigned":
-                st["courier_id"] = random.choice(COURIERS)
+                if not free_couriers:
+                    # Усі кур'єри зайняті — замовлення чекає, перевіримо знову через 1 с
+                    st["next_at"] = time.time() + 1
+                    continue
+                st["courier_id"] = random.choice(sorted(free_couriers))
+                free_couriers.remove(st["courier_id"])
 
             publish(ch, {
                 "event": "status_changed",
@@ -147,6 +166,8 @@ def main():
             })
 
             if new_status in ("delivered", "canceled"):
+                if st["courier_id"] is not None:
+                    free_couriers.add(st["courier_id"])   # кур'єр знову вільний
                 del active[order_id]          # замовлення завершене
             else:
                 st["status"] = new_status

@@ -120,7 +120,7 @@ services:
     networks:
       - delivery-net
 
-  # Grafana — візуалізація (http://localhost:3000)
+  # Grafana — візуалізація (доступ лише через nginx + авторизацію: http://localhost:8080)
   grafana:
     image: grafana/grafana:11.2.0
     container_name: grafana
@@ -128,12 +128,22 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
       GF_USERS_ALLOW_SIGN_UP: "false"            # заборона самостійної реєстрації
+      GF_SERVER_ROOT_URL: http://localhost:8088/ # Grafana працює за nginx — для коректних посилань
+      # Авторизація через наш сервер: Grafana довіряє імені користувача із заголовка від nginx
+      GF_AUTH_PROXY_ENABLED: "true"
+      GF_AUTH_PROXY_HEADER_NAME: X-WEBAUTH-USER
+      GF_AUTH_PROXY_HEADER_PROPERTY: username
+      GF_AUTH_PROXY_AUTO_SIGN_UP: "true"         # створити користувача в Grafana при першому вході
+      GF_AUTH_PROXY_HEADERS: "Role:X-WEBAUTH-ROLE"  # роль (Admin / Viewer) теж береться із заголовка
+      GF_AUTH_PROXY_SYNC_TTL: "1"                # перечитувати дані користувача щохвилини
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"         # власна форма входу Grafana не потрібна
+      GF_AUTH_SIGNOUT_REDIRECT_URL: /auth/logout # кнопка "Sign out" у Grafana -> вихід з нашої системи
+      GF_LIVE_MAX_CONNECTIONS: "0"               # вимикаємо WebSocket-оновлення (не потрібні)
     volumes:
       - grafana_data:/var/lib/grafana                          # внутрішня БД Grafana (користувачі, налаштування)
       - ./grafana/provisioning:/etc/grafana/provisioning:ro     # автопідключення джерел даних і дашбордів
       - ./grafana/dashboards:/etc/grafana/dashboards:ro         # JSON-файли дашбордів
-    ports:
-      - "3000:3000"
+    # порт 3000 НЕ відкриваємо назовні: інакше можна обійти авторизацію
     depends_on:
       - prometheus
       - loki
@@ -220,6 +230,39 @@ services:
     networks:
       - delivery-net
 
+  # Сервер авторизації (Python + Flask + SQLite)
+  auth:
+    build: ./auth
+    container_name: auth
+    environment:
+      AUTH_DB_PATH: /data/users.db
+      JWT_SECRET: delivery-monitoring-secret-key-change-me-2026   # ключ підпису токенів (мін. 32 символи)
+      JWT_TTL_HOURS: "8"
+      ADMIN_USER: admin               # початкові користувачі (створюються, якщо база порожня)
+      ADMIN_PASSWORD: admin123
+      VIEWER_USER: viewer
+      VIEWER_PASSWORD: viewer123
+    volumes:
+      - auth_data:/data               # файл SQLite з користувачами
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
+  # Nginx — єдина точка входу: http://localhost:8088
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8088:80"
+    depends_on:
+      - auth
+      - grafana
+    restart: unless-stopped
+    networks:
+      - delivery-net
+
 volumes:
   pg_data:
   rabbit_data:
@@ -229,6 +272,7 @@ volumes:
   alloy_data:
   tempo_data:
   alertmanager_data:
+  auth_data:
 
 networks:
   delivery-net:

@@ -73,3 +73,16 @@ groups:
         annotations:
           summary: "Замовлення чекають на кур'єра"
           description: "{{ $value | printf \"%.0f\" }} замовлень очікують призначення кур'єра."
+
+
+  # ---------- Безпека ----------
+  - name: security
+    rules:
+      - alert: TooManyFailedLogins
+        expr: sum(increase(auth_login_attempts_total{result=~"failure|locked"}[5m])) > 5
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Підозріло багато невдалих спроб входу"
+          description: "За 5 хв {{ $value | printf \"%.0f\" }} невдалих спроб входу — можливий підбір пароля."

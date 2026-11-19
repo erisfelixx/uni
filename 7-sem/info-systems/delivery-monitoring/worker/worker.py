@@ -35,6 +35,7 @@ QUEUE = "order_events"
 DB_DSN = os.getenv("DB_DSN", "postgresql://delivery:delivery@localhost:5432/delivery")
 METRICS_PORT = 8000            # порт для Prometheus (/metrics)
 STATS_INTERVAL = 10            # як часто (с) рахувати статистику по таблицях
+STALE_MINUTES = 15             # замовлення без змін довше цього часу вважається "завислим" і скасовується
 OTLP_ENDPOINT = os.getenv("OTLP_ENDPOINT", "http://localhost:4318/v1/traces")  # куди надсилати трейси (Tempo)
 
 ALL_STATUSES = ["created", "assigned", "picked_up", "in_transit", "delivered", "canceled"]
@@ -72,6 +73,10 @@ ORDERS_BY_STATUS = Gauge(
     "delivery_orders_by_status",
     "Кількість замовлень у БД за статусами",
     ["status"],
+)
+ORDERS_EXPIRED = Counter(
+    "delivery_orders_expired_total",
+    "Кількість завислих замовлень, автоматично скасованих за тайм-аутом",
 )
 COURIERS_BUSY = Gauge(
     "delivery_couriers_busy",
@@ -154,11 +159,16 @@ def save_event(db, ev):
                            updated_at = %s,
                            delivered_at = CASE WHEN %s = 'delivered' THEN %s ELSE delivered_at END
                        WHERE id = %s
+                         AND status NOT IN ('delivered', 'canceled')   -- завершене замовлення не "оживає"
                        RETURNING price, created_at""",
                     (ev["status"], ev["courier_id"], ev["ts"], ev["status"], ev["ts"], ev["order_id"]),
                 ).fetchone()
+            if row is None:
+                # Замовлення вже завершене (наприклад, скасоване за тайм-аутом) — подію ігноруємо
+                log.warning("Order %s is already closed, event %s ignored", ev["order_id"][:8], ev["status"])
+                return
             # Бізнес-метрики для доставлених замовлень
-            if ev["status"] == "delivered" and row:
+            if ev["status"] == "delivered":
                 price, created_at = row
                 duration = (datetime.fromisoformat(ev["ts"]) - created_at).total_seconds()
                 DELIVERY_DURATION.observe(duration)
@@ -171,12 +181,36 @@ def save_event(db, ev):
             )
 
 
+def expire_stale_orders(db):
+    """Бізнес-правило: замовлення, яке не змінювалося понад STALE_MINUTES хвилин, скасовується.
+    Так з БД прибираються "завислі" замовлення (наприклад, після перезапуску producer, який тримає активні замовлення лише в пам'яті), і метрики знову відповідають реальності."""
+    with db_operation("expire_stale", "UPDATE orders SET status = 'canceled' WHERE updated_at < now() - interval ..."), \
+            db.transaction():
+        expired = db.execute(
+            """UPDATE orders
+               SET status = 'canceled', updated_at = now()
+               WHERE status IN ('created', 'assigned', 'picked_up', 'in_transit')
+                 AND updated_at < now() - %s * interval '1 minute'
+               RETURNING id, courier_id""",
+            (STALE_MINUTES,),
+        ).fetchall()
+        for order_id, courier_id in expired:
+            db.execute(
+                "INSERT INTO order_events (order_id, status, courier_id) VALUES (%s, 'canceled', %s)",
+                (order_id, courier_id),
+            )
+    if expired:
+        ORDERS_EXPIRED.inc(len(expired))
+        log.warning("Auto-canceled %d stale orders (no updates for more than %d min)", len(expired), STALE_MINUTES)
+
+
 def collect_db_stats():
     """Фоновий потік: кожні STATS_INTERVAL секунд рахує стан замовлень у БД.
     Має власне з'єднання, бо одне з'єднання не можна використовувати з двох потоків."""
     db = connect_db()
     while True:
         try:
+            expire_stale_orders(db)
             with db_operation("stats", "SELECT status, count(*) FROM orders GROUP BY status"):
                 counts = dict(db.execute("SELECT status, count(*) FROM orders GROUP BY status").fetchall())
                 busy = db.execute(
@@ -203,6 +237,7 @@ def main():
     conn, ch = connect_rabbit()
 
     def on_message(channel, method, properties, body):
+        nonlocal db
         # Відновлюємо контекст трейсу з заголовків повідомлення -> спан worker'а стає продовженням трейсу producer'а
         parent_ctx = propagate.extract(properties.headers or {})
         with tracer.start_as_current_span("process order_event", context=parent_ctx,
@@ -216,6 +251,14 @@ def main():
                 EVENTS_PROCESSED.labels(event=ev["event"], status=ev["status"]).inc()
                 log.info("Saved %s order=%s status=%s trace_id=%s",
                          ev["event"], ev["order_id"][:8], ev["status"], trace_id_hex(span))
+            except psycopg.OperationalError as e:
+                # БД недоступна: повертаємо повідомлення в чергу (подія не втрачається) і чекаємо, поки БД відновиться; після цього worker обробить чергу
+                channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+                EVENTS_FAILED.inc()
+                span.record_exception(e)
+                span.set_status(Status(StatusCode.ERROR))
+                log.error("Database unavailable, message returned to queue: %s trace_id=%s", e, trace_id_hex(span))
+                db = connect_db()                        # повторні спроби підключення кожні 3 с
             except Exception as e:
                 # Помилка: відхиляємо повідомлення без повернення в чергу, щоб не зациклитись
                 channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)

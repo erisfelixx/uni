@@ -139,6 +139,7 @@ services:
       GF_AUTH_DISABLE_LOGIN_FORM: "true"         # власна форма входу Grafana не потрібна
       GF_AUTH_SIGNOUT_REDIRECT_URL: /auth/logout # кнопка "Sign out" у Grafana -> вихід з нашої системи
       GF_LIVE_MAX_CONNECTIONS: "0"               # вимикаємо WebSocket-оновлення (не потрібні)
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/delivery.json  # шоб одразу після входу — наш дашборд
     volumes:
       - grafana_data:/var/lib/grafana                          # внутрішня БД Grafana (користувачі, налаштування)
       - ./grafana/provisioning:/etc/grafana/provisioning:ro     # автопідключення джерел даних і дашбордів

@@ -200,7 +200,7 @@ def safe_next(url):
 PAGE_STYLE = """
 <style>
   body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: #111217; color: #ccccdc;
-         display: flex; justify-content: center; padding-top: 8vh; margin: 0; }
+         display: flex; justify-content: center; align-items: flex-start; padding-top: 8vh; margin: 0; }
   .card { background: #181b1f; border: 1px solid #2c3235; border-radius: 8px; padding: 32px 40px; min-width: 340px; }
   h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px; }
   p.sub { color: #8e8e9e; margin: 0 0 24px; font-size: 14px; }
